@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* global.css or calendar.module.css */
+.no-weekend-color {
+    @apply text-gray-900 dark:text-white;
+    /* or any other default text color you want */
+}

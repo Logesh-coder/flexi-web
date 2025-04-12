@@ -1,0 +1,8 @@
+.react-time-picker__wrapper {
+    border: 0 !important;
+}
+
+.react-calendar__navigation button:disabled {
+    @apply dark:bg-black cursor-pointer;
+    cursor: not-allowed !important;
+}
