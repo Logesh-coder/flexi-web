@@ -1,27 +1,19 @@
 export interface Job {
-  id: number
+  _id: number
   title: string
   description: string
-  type: string
+  city: string
+  date: string
   area: string
   budget: string
   timePosted: string
-  skills: string[]
+  landMark: string
   experience: string
   durationStartTime: string
   durationEndTime: string
-}
-
-export interface JobFormData {
-  title: string
-  description: string
-  budget: string
-  date: string
-  area: string
-  city: string
-  landMark: string
-  durationStartTime: string
-  durationEndTime: string
+  search: string
+  minBudget: string
+  maxBudget: string
 }
 
 export interface JobFilters {
@@ -29,6 +21,7 @@ export interface JobFilters {
   type: string
   experience: string
   area: string
+  city: string
   minBudget: string
   maxBudget: string
   durationStartTime: string

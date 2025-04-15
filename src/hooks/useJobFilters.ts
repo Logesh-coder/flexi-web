@@ -1,39 +1,46 @@
-import { useState, useEffect } from 'react'
 import { Job, JobFilters } from '@/types/jobs'
-
-const MOCK_JOBS: Job[] = [
-  {
-    id: 1,
-    title: 'Senior React Developer',
-    description: 'Looking for an experienced React developer...',
-    type: 'full-time',
-    location: 'Remote',
-    budget: '$5,000 - $7,000',
-    timePosted: '2 hours ago',
-    skills: ['React', 'TypeScript', 'Next.js'],
-    experience: 'expert'
-  },
-  // Add more mock jobs here
-]
+import axios from 'axios'
+import { useEffect, useState } from 'react'
 
 export function useJobFilters() {
   const [filters, setFilters] = useState<JobFilters>({
     search: '',
-    type: '',
-    experience: '',
-    location: '',
+    city: '',
+    area: '',
     minBudget: '',
-    maxBudget: ''
+    maxBudget: '',
   })
 
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>(MOCK_JOBS)
+  const [jobs, setJobs] = useState<Job[]>([])
+  const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   const updateFilter = (key: keyof JobFilters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
   }
 
+  // Fetch jobs from API once
   useEffect(() => {
-    let result = MOCK_JOBS
+    const fetchJobs = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get<Job[]>('/api/jobs') // 👈 replace with your actual API endpoint
+        setJobs(response.data)
+        setFilteredJobs(response.data)
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch jobs')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchJobs()
+  }, [])
+
+  // Apply filters when they change
+  useEffect(() => {
+    let result = [...jobs]
 
     if (filters.search) {
       const searchLower = filters.search.toLowerCase()
@@ -44,27 +51,39 @@ export function useJobFilters() {
       )
     }
 
-    if (filters.type) {
-      result = result.filter(job => job.type === filters.type)
-    }
-
-    if (filters.experience) {
-      result = result.filter(job => job.experience === filters.experience)
-    }
-
-    if (filters.location) {
-      const locationLower = filters.location.toLowerCase()
+    if (filters.city) {
+      const cityLower = filters.city.toLowerCase()
       result = result.filter(job =>
-        job.location.toLowerCase().includes(locationLower)
+        job.city?.toLowerCase().includes(cityLower)
       )
     }
 
+    if (filters.area) {
+      const areaLower = filters.area.toLowerCase()
+      result = result.filter(job =>
+        job.area?.toLowerCase().includes(areaLower)
+      )
+    }
+
+    const min = parseFloat(filters.minBudget)
+    const max = parseFloat(filters.maxBudget)
+
+    if (!isNaN(min)) {
+      result = result.filter(job => parseFloat(job.budget.replace(/[^\d.-]/g, '')) >= min)
+    }
+
+    if (!isNaN(max)) {
+      result = result.filter(job => parseFloat(job.budget.replace(/[^\d.-]/g, '')) <= max)
+    }
+
     setFilteredJobs(result)
-  }, [filters])
+  }, [filters, jobs])
 
   return {
     filters,
     jobs: filteredJobs,
-    updateFilter
+    loading,
+    error,
+    updateFilter,
   }
 }

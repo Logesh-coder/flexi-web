@@ -5,7 +5,7 @@ import { JobGrid } from '@/components/jobs/JobGrid'
 import { useJobFilters } from '@/hooks/useJobFilters'
 
 export default function JobsPage() {
-  const { filters, jobs, updateFilter } = useJobFilters()
+  const { filters, jobs, updateFilter } = useJobFilters();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

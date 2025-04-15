@@ -197,6 +197,6 @@ export default function JobPostForm({
       </form >
 
       <JobPreview jobData={watchedData} />
-    </div >
+    </div>
   )
 }
