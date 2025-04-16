@@ -1,33 +1,50 @@
+import getJobService from '@/services/get-jobs'
 import { Job, JobFilters } from '@/types/jobs'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function useJobFilters() {
-  const [filters, setFilters] = useState<JobFilters>({
-    search: '',
+  const [filters, setFilters] = useState({
     city: '',
     area: '',
+    date: '',
     minBudget: '',
     maxBudget: '',
+    search: '',
   })
 
   const [jobs, setJobs] = useState<Job[]>([])
-  const [filteredJobs, setFilteredJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [search, setSearch] = useState<boolean>(false)
+  const [searchValue, setSearchValue] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const updateFilter = (key: keyof JobFilters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }))
   }
 
-  // Fetch jobs from API once
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSearchValue(value)
+
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+
+    debounceTimeoutRef.current = setTimeout(() => {
+      if (value.length >= 3 || value.length === 0) {
+        updateFilter('search', value)
+      }
+    }, 300)
+  }
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         setLoading(true)
-        const response = await axios.get<Job[]>('/api/jobs') // 👈 replace with your actual API endpoint
-        setJobs(response.data)
-        setFilteredJobs(response.data)
+        const response = await getJobService(filters)
+        setJobs(response.data?.data)
+
       } catch (err: any) {
         setError(err.message || 'Failed to fetch jobs')
       } finally {
@@ -36,54 +53,17 @@ export function useJobFilters() {
     }
 
     fetchJobs()
-  }, [])
-
-  // Apply filters when they change
-  useEffect(() => {
-    let result = [...jobs]
-
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      result = result.filter(
-        job =>
-          job.title.toLowerCase().includes(searchLower) ||
-          job.description.toLowerCase().includes(searchLower)
-      )
-    }
-
-    if (filters.city) {
-      const cityLower = filters.city.toLowerCase()
-      result = result.filter(job =>
-        job.city?.toLowerCase().includes(cityLower)
-      )
-    }
-
-    if (filters.area) {
-      const areaLower = filters.area.toLowerCase()
-      result = result.filter(job =>
-        job.area?.toLowerCase().includes(areaLower)
-      )
-    }
-
-    const min = parseFloat(filters.minBudget)
-    const max = parseFloat(filters.maxBudget)
-
-    if (!isNaN(min)) {
-      result = result.filter(job => parseFloat(job.budget.replace(/[^\d.-]/g, '')) >= min)
-    }
-
-    if (!isNaN(max)) {
-      result = result.filter(job => parseFloat(job.budget.replace(/[^\d.-]/g, '')) <= max)
-    }
-
-    setFilteredJobs(result)
-  }, [filters, jobs])
+  }, [search, filters.search])
 
   return {
     filters,
-    jobs: filteredJobs,
+    jobs: jobs,
     loading,
     error,
     updateFilter,
+    setSearch,
+    search,
+    searchValue,
+    setSearchValue: handleSearchChange,
   }
 }

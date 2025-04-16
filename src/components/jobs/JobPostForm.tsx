@@ -56,7 +56,6 @@ export default function JobPostForm({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <div className="space-y-6">
-
           <Controller
             name="title"
             control={control}
@@ -107,7 +106,7 @@ export default function JobPostForm({
                   {...field}
                   error={errors.date?.message}
                   placeholder="Select Date"
-                  minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+                  minDate={new Date()}
                 />
               )}
             />

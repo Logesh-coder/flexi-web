@@ -48,7 +48,7 @@ export function JobCard({ job }: JobCardProps) {
         {/* Header */}
         <div className="mb-4">
           <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            <Link href={`/jobs/${job._id}`} className="hover:underline">
+            <Link href={`/jobs/${job.slug}`} className="hover:underline">
               {job.title}
             </Link>
           </h3>
@@ -57,7 +57,7 @@ export function JobCard({ job }: JobCardProps) {
           <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
             <span className="flex items-center gap-1.5">
               <CalendarDays className="w-4 h-4 opacity-70" />
-              {new Date(job.date).toLocaleDateString('en-GB')}
+              {job.date}
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
@@ -92,7 +92,7 @@ export function JobCard({ job }: JobCardProps) {
         <div className="mt-auto">
           <div className="text-right text-xs text-gray-400 dark:text-gray-500">
             <Link
-              href={`/jobs/${job._id}`}
+              href={`/jobs/${job.slug}`}
               className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
             >
               View details

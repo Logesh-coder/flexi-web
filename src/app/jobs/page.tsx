@@ -1,19 +1,21 @@
 'use client'
 
-import { JobFilters } from '@/components/jobs/JobFilters'
-import { JobGrid } from '@/components/jobs/JobGrid'
-import { useJobFilters } from '@/hooks/useJobFilters'
+import { JobFilters } from '@/components/jobs/JobFilters';
+import { JobGrid } from '@/components/jobs/JobGrid';
+import { useJobFilters } from '@/hooks/useJobFilters';
 
 export default function JobsPage() {
-  const { filters, jobs, updateFilter } = useJobFilters();
+  const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue } = useJobFilters();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Find Jobs</h1>
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <JobFilters filters={filters} updateFilter={updateFilter} />
-        <div className="lg:col-span-3">
-          <JobGrid jobs={jobs} />
+      <div className="flex  gap-8">
+        <div className="w-[30%] max-md:hidden ">
+          <JobFilters filters={filters} updateFilter={updateFilter} search={search} setSearch={setSearch} />
+        </div>
+        <div className=" md:w-[70%] w-full">
+          <JobGrid updateFilter={updateFilter} jobs={jobs} loading={loading} searchValue={searchValue} setSearchValue={setSearchValue} />
         </div>
       </div>
     </div>

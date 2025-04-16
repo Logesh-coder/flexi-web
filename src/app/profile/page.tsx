@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import { User, Mail, MapPin, Link as LinkIcon, Briefcase } from 'lucide-react'
-import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
+import Input from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
+import { Link as LinkIcon, Mail, MapPin, User } from 'lucide-react'
+import { useState } from 'react'
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({
@@ -25,7 +25,7 @@ export default function ProfilePage() {
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Profile Settings</h1>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex items-center space-x-4">
             <div className="w-24 h-24 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">

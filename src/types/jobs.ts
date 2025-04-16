@@ -14,16 +14,15 @@ export interface Job {
   search: string
   minBudget: string
   maxBudget: string
+  slug: string
 }
 
 export interface JobFilters {
   search: string
-  type: string
-  experience: string
   area: string
   city: string
   minBudget: string
   maxBudget: string
-  durationStartTime: string
-  durationEndTime: string
+  durationStartTime?: string
+  durationEndTime?: string
 }

@@ -6,3 +6,11 @@
     @apply dark:bg-black cursor-pointer;
     cursor: not-allowed !important;
 }
+
+.react-calendar__tile--now {
+    @apply bg-primary-400 !important;
+}
+
+.react-calendar__tile--active {
+    @apply bg-primary-600 dark:text-white !important;
+}

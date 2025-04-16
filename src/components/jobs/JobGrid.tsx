@@ -1,40 +1,57 @@
-import { useJobFilters } from '@/hooks/useJobFilters';
-import { Job } from '@/types/jobs';
+import { JobFilters } from '@/types/jobs';
 import { Search } from 'lucide-react';
 import Input from '../ui/Input';
 import { JobCard } from './JobCard';
+import { JobCardSkeleton } from './JobCardSkeleton';
 
 interface JobGridProps {
-  jobs: Job[]
+  updateFilter: (key: keyof JobFilters, value: string) => void;
+  jobs: any;
+  loading: boolean;
+  searchValue: string;
+  setSearchValue: any;
 }
 
-export function JobGrid({ jobs }: JobGridProps) {
-  const { filters, updateFilter } = useJobFilters();
+export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loading }: JobGridProps) {
 
+  const jobsArray = jobs?.jobs as any ?? [];
 
-  if (jobs.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-600 dark:text-gray-400">No jobs found matching your criteria.</p>
-      </div>
-    )
-  }
 
   return (
     <>
       <Input
         icon={Search}
-        placeholder="Search jobs..."
-        value={filters.search}
+        placeholder="Search jobs title..."
+        value={searchValue}
         className='mb-8'
-        onChange={(e) => updateFilter('search', e.target.value)}
+        onChange={setSearchValue}
       />
 
-      <div className="grid gap-6">
-        {jobs.map((job) => (
-          <JobCard key={job._id} job={job} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="grid gap-6">
+          {[...Array(2)].map((_, i) => (
+            <JobCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          <>
+            {jobsArray && jobsArray.length > 0 ? (
+              <div className="grid gap-6">
+                {jobsArray.map((job: any) => (
+                  <JobCard key={job._id} job={job} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-600 dark:text-gray-400">No jobs found</p>
+              </div>
+            )}
+
+          </>
+        </div>
+      )}
+
     </>
   )
 }

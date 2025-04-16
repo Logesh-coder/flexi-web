@@ -140,9 +140,17 @@ export const jobPostSchema = yup.object().shape({
         .required('Date is required')
         .test(
             'future-date',
-            'Date must be in the future',
-            (value) => new Date(value) > new Date()
+            'Date cannot be in the past',
+            (value) => {
+                const selectedDate = new Date(value);
+                const today = new Date();
+                // Set time to 00:00:00 for both
+                selectedDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+                return selectedDate >= today;
+            }
         ),
+
 
     durationStartTime: yup
         .string()

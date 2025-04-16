@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import { Lock } from 'lucide-react'
+import { useState } from 'react'
+import Input from '../ui/Input'
 
 export function SecuritySettings() {
   const [passwords, setPasswords] = useState({
@@ -13,7 +13,7 @@ export function SecuritySettings() {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Security</h2>
-      
+
       <form className="space-y-6">
         <Input
           icon={Lock}
@@ -22,7 +22,7 @@ export function SecuritySettings() {
           value={passwords.current}
           onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
         />
-        
+
         <Input
           icon={Lock}
           label="New Password"
@@ -30,7 +30,7 @@ export function SecuritySettings() {
           value={passwords.new}
           onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
         />
-        
+
         <Input
           icon={Lock}
           label="Confirm New Password"

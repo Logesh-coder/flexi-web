@@ -42,11 +42,11 @@ export function JobList() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Latest Projects
+            Latest Jobs
           </h2>
-          <button className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
+          <Link href='/jobs' className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
             View all
-          </button>
+          </Link>
         </div>
         <div className="grid gap-6">
           {jobs.map((job) => (

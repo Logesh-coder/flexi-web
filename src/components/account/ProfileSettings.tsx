@@ -1,70 +1,151 @@
-import { useState } from 'react'
-import { Input } from '@/components/ui/Input'
-import { Textarea } from '@/components/ui/Textarea'
-import { Button } from '@/components/ui/Button'
-import { User, Mail, MapPin, Link as LinkIcon } from 'lucide-react'
+import editProfile from '@/services/edit-profile';
+import myProfile from '@/services/my-profile';
+import { Calendar as CalendarIcon, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import Calendar from 'react-calendar';
+import Input from '../ui/Input';
+
+interface Profile {
+  _id: string;
+  name: string;
+  email: string;
+  mobile: number;
+  date_of_birth: string;
+  instaProfileLink?: string;
+}
 
 export function ProfileSettings() {
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    location: 'New York, USA',
-    bio: 'Full-stack developer with 5 years of experience...',
-    website: 'https://johndoe.dev',
-  })
+  const [originalProfile, setOriginalProfile] = useState<Partial<Profile>>({});
+  const [profile, setProfile] = useState<Partial<Profile>>({});
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
+
+  const handleSaveChanges = async () => {
+    if (hasChanges) {
+      try {
+        const response = await editProfile(profile)
+        if (response.status == 200) {
+          alert('Profile updated successfully!');
+          setOriginalProfile(profile);
+        } else {
+          alert('Failed to update profile');
+        }
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Something went wrong!');
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await myProfile();
+        setProfile(response?.data?.data);
+        setOriginalProfile(response?.data?.data)
+      } catch (err: any) {
+        console.error('Failed to load profile', err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
-      
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-            <User className="w-10 h-10 text-primary-600 dark:text-primary-400" />
-          </div>
-          <Button variant="outline">Change Photo</Button>
-        </div>
 
+      <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             icon={User}
             label="Full Name"
-            value={profile.name}
+            value={profile.name || ''}
             onChange={(e) => setProfile({ ...profile, name: e.target.value })}
           />
           <Input
             icon={Mail}
             label="Email"
             type="email"
-            value={profile.email}
-            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+            className="cursor-not-allowed"
+            disabled
+            value={profile.email || ''}
           />
           <Input
-            icon={MapPin}
-            label="Location"
-            value={profile.location}
-            onChange={(e) => setProfile({ ...profile, location: e.target.value })}
+            icon={Phone}
+            label="Mobile"
+            value={profile.mobile?.toString() || ''}
+            onChange={(e) => setProfile({ ...profile, mobile: Number(e.target.value) })}
           />
+
+          {/* Date of Birth Input with Calendar */}
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date of Birth</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <CalendarIcon className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                readOnly
+                value={
+                  profile.date_of_birth
+                    ? new Date(profile.date_of_birth).toLocaleDateString('en-GB') // DD-MM-YYYY format
+                    : ''
+                }
+                onClick={() => setShowCalendar((prev) => !prev)}
+                className="block w-full rounded-lg border border-gray-300 dark:border-gray-600
+                  bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                  focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+                  dark:focus:ring-primary-500 dark:focus:border-primary-500
+                  pl-10 pr-4 py-2"
+              />
+
+              {showCalendar && (
+                <div className="absolute z-50 mt-2 shadow-lg rounded-lg bg-white dark:bg-gray-800">
+                  <Calendar
+                    onChange={(date) => {
+                      if (date instanceof Date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const formattedDate = `${year}-${month}-${day}`; // e.g., 2024-04-12
+                        setProfile({ ...profile, date_of_birth: formattedDate });
+                        setShowCalendar(false);
+                      }
+                    }}
+                    className="!w-full dark:!bg-black"
+                    value={profile.date_of_birth ? new Date(profile.date_of_birth) : null}
+                  />
+
+                </div>
+              )}
+            </div>
+          </div>
+
           <Input
             icon={LinkIcon}
-            label="Website"
+            label="Instagram Profile Link"
             type="url"
-            value={profile.website}
-            onChange={(e) => setProfile({ ...profile, website: e.target.value })}
+            value={profile.instaProfileLink || ''}
+            onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
           />
         </div>
 
-        <Textarea
-          label="Bio"
-          value={profile.bio}
-          onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-          rows={4}
-        />
-
         <div className="flex justify-end">
-          <Button type="submit">Save Changes</Button>
+          {/* <Button type="submit" disabled={!hasChanges}>
+            Save Changes
+          </Button> */}
+          <button
+            disabled={!hasChanges}
+            className={`text-sm px-3 py-2 rounded-lg text-white transition-colors duration-200 ${hasChanges ? 'bg-primary-500 hover:bg-primary-600' : 'bg-primary-300 cursor-not-allowed'
+              }`}
+            onClick={() => handleSaveChanges}
+          >
+            Save Changes
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }
