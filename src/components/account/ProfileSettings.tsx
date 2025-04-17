@@ -18,25 +18,40 @@ export function ProfileSettings() {
   const [originalProfile, setOriginalProfile] = useState<Partial<Profile>>({});
   const [profile, setProfile] = useState<Partial<Profile>>({});
   const [showCalendar, setShowCalendar] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState('');
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
   const handleSaveChanges = async () => {
     if (hasChanges) {
       try {
-        const response = await editProfile(profile)
-        if (response.status == 200) {
-          alert('Profile updated successfully!');
+        const response = await editProfile(profile);
+        if (response.status === 200) {
+          setAlertType('success');
+          setAlertMessage('Profile updated successfully!');
           setOriginalProfile(profile);
         } else {
-          alert('Failed to update profile');
+          setAlertType('error');
+          setAlertMessage('Failed to update profile');
         }
       } catch (error) {
         console.error('Error updating profile:', error);
-        alert('Something went wrong!');
+        setAlertType('error');
+        setAlertMessage(error?.response?.data?.message);
       }
     }
   };
+
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]);
+
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -140,12 +155,25 @@ export function ProfileSettings() {
             disabled={!hasChanges}
             className={`text-sm px-3 py-2 rounded-lg text-white transition-colors duration-200 ${hasChanges ? 'bg-primary-500 hover:bg-primary-600' : 'bg-primary-300 cursor-not-allowed'
               }`}
-            onClick={() => handleSaveChanges}
+            onClick={handleSaveChanges}
           >
             Save Changes
           </button>
         </div>
       </div>
+
+      {alertMessage && (
+        <div
+          className={`p-4 mb-4 text-sm rounded-lg ${alertType === 'success'
+            ? 'text-green-800 bg-green-100'
+            : 'text-red-800 bg-red-100'
+            }`}
+          role="alert"
+        >
+          {alertMessage}
+        </div>
+      )}
+
     </div>
   );
 }

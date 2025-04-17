@@ -9,7 +9,7 @@ interface Profile {
 
 
 const editProfile = (data: Profile) => {
-    const res = AxiosInstance.post('/user/edit-profile', data);
+    const res = AxiosInstance.put('/user/edit-profile', data);
     return res;
 };
 
