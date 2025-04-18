@@ -1,6 +1,7 @@
 import { Job } from '@/types/jobs'
 import { CalendarDays, Clock, MapPin, MoreVertical } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 interface JobCardProps {
@@ -10,6 +11,7 @@ interface JobCardProps {
 export function JobCard({ job }: JobCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const pathname = usePathname();
 
   const toggleSave = () => {
     setIsSaved(!isSaved)
@@ -92,7 +94,7 @@ export function JobCard({ job }: JobCardProps) {
         <div className="mt-auto">
           <div className="text-right text-xs text-gray-400 dark:text-gray-500">
             <Link
-              href={`/jobs/${job.slug}`}
+              href={` ${pathname === '/jobs/post' ? "" : `/jobs/${job.slug}`}`}
               className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
             >
               View details

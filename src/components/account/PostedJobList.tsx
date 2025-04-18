@@ -9,7 +9,7 @@ export function PostedJobList({ jobs }: PostedJobListProps) {
   return (
     <div className="space-y-4">
       {jobs.map((job) => (
-        <PostedJobCard key={job.id} job={job} />
+        <PostedJobCard key={job._id} job={job} />
       ))}
     </div>
   )

@@ -1,10 +1,10 @@
 'use client'
 
-import { usePostedJobs } from '@/hooks/usePostedJobs'
 import { PostedJobList } from '@/components/account/PostedJobList'
 import { EmptyState } from '@/components/EmptyState'
-import { Briefcase } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { usePostedJobs } from '@/hooks/usePostedJobs'
+import { Briefcase } from 'lucide-react'
 import Link from 'next/link'
 
 export default function PostedJobsPage() {
@@ -18,7 +18,7 @@ export default function PostedJobsPage() {
           <Button>Post New Job</Button>
         </Link>
       </div>
-      
+
       {postedJobs.length > 0 ? (
         <PostedJobList jobs={postedJobs} />
       ) : (

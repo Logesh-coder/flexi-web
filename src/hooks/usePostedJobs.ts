@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import { Job } from '@/types/jobs'
+import { useState } from 'react'
 
 const MOCK_POSTED_JOBS: Job[] = [
   {
-    id: 1,
+    _id: 1,
     title: 'Frontend Developer Needed',
     description: 'Looking for a skilled frontend developer...',
     type: 'contract',

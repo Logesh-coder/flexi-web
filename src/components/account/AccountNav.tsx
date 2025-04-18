@@ -1,11 +1,10 @@
-import { Bookmark, Briefcase, FileText, Settings, UserX } from 'lucide-react';
+import { Bookmark, Briefcase, Settings, UserX } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 const navItems = [
   { href: '/account/settings', label: 'Settings', icon: Settings },
-  { href: '/account/saved', label: 'Saved Jobs', icon: Bookmark },
-  { href: '/account/applications', label: 'Applications', icon: FileText },
+  { href: '/account/saved', label: 'Saved', icon: Bookmark },
   { href: '/account/jobs', label: 'Posted Jobs', icon: Briefcase },
 ]
 

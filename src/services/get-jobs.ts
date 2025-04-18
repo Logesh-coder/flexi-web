@@ -6,6 +6,9 @@ interface JobFiltersProps {
     date: string;
     minBudget: string;
     maxBudget: string;
+    search?: string;
+    page?: number;
+    limit?: number;
 }
 
 const getJobService = (filters: JobFiltersProps) => {

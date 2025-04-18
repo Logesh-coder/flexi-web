@@ -17,6 +17,9 @@ export function useJobFilters() {
   const [search, setSearch] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1); // current page
+  const [hasMore, setHasMore] = useState(true);
+
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const updateFilter = (key: keyof JobFilters, value: string) => {
@@ -42,8 +45,14 @@ export function useJobFilters() {
     const fetchJobs = async () => {
       try {
         setLoading(true)
-        const response = await getJobService(filters)
-        setJobs(response.data?.data)
+
+        const response = await getJobService({ ...filters, page, limit: 2 });
+
+        const fetchedJobs = response.data?.data?.jobs || [];
+        const totalPages = response.data?.data?.pages || 1;
+
+        setJobs(prev => (page === 1 ? fetchedJobs : [...prev, ...fetchedJobs]));
+        setHasMore(page < totalPages);
 
       } catch (err: any) {
         setError(err.message || 'Failed to fetch jobs')
@@ -53,7 +62,7 @@ export function useJobFilters() {
     }
 
     fetchJobs()
-  }, [search, filters.search])
+  }, [search, filters.search, page])
 
   return {
     filters,
@@ -65,5 +74,7 @@ export function useJobFilters() {
     search,
     searchValue,
     setSearchValue: handleSearchChange,
+    hasMore,
+    loadMore: () => setPage(prev => prev + 1),
   }
 }

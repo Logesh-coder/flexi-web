@@ -9,7 +9,7 @@ import 'react-time-picker/dist/TimePicker.css';
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: LucideIcon
   label?: string
-  error?: string
+  error?: string | any
   value?: any
   onChange?: (e: any) => void
   setValue?: (field: string, value: any, options?: object) => void

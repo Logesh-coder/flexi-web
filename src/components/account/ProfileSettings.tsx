@@ -1,8 +1,10 @@
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
+import { AxiosError } from 'axios';
 import { Calendar as CalendarIcon, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Calendar from 'react-calendar';
+import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 
 interface Profile {
@@ -12,6 +14,7 @@ interface Profile {
   mobile: number;
   date_of_birth: string;
   instaProfileLink?: string;
+  profileUrl?: string;
 }
 
 export function ProfileSettings() {
@@ -20,6 +23,26 @@ export function ProfileSettings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      const maxSizeInBytes = 2 * 1024 * 1024;
+
+      if (file.size > maxSizeInBytes) {
+        alert("File size should not exceed 2MB.");
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(file);
+      setProfile((prev) => ({ ...prev, photo: file }));
+      setPreview(imageUrl);
+    }
+  };
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
@@ -35,10 +58,10 @@ export function ProfileSettings() {
           setAlertType('error');
           setAlertMessage('Failed to update profile');
         }
-      } catch (error) {
-        console.error('Error updating profile:', error);
+      } catch (err) {
         setAlertType('error');
-        setAlertMessage(error?.response?.data?.message);
+        const error = err as AxiosError<{ message: string }>;
+        setAlertMessage(error.response?.data?.message || 'Something went wrong');
       }
     }
   };
@@ -51,7 +74,6 @@ export function ProfileSettings() {
       return () => clearTimeout(timer);
     }
   }, [alertMessage]);
-
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -72,6 +94,45 @@ export function ProfileSettings() {
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
 
       <div className="space-y-6">
+        <div className="flex items-center space-x-4">
+          <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 overflow-hidden">
+            {preview ? (
+              <img src={preview} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
+                <User className="w-10 h-10 text-primary-600 dark:text-primary-400" />
+              </div>
+            )}
+          </div>
+          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+            Change Photo
+          </Button>
+          {preview && (
+            <button
+              onClick={() => {
+                setProfile(prev => {
+                  const updatedProfile = { ...prev };
+                  delete updatedProfile.profileUrl;
+                  return updatedProfile;
+                });
+                setPreview(null);
+              }}
+              className="text-red-400 underline text-sm ml-4"
+            >
+              Remove
+            </button>
+          )}
+
+
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             icon={User}

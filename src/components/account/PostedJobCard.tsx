@@ -1,6 +1,6 @@
-import { Job } from '@/types/jobs'
-import { Clock, Users } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { Job } from '@/types/jobs'
+import { Clock } from 'lucide-react'
 import Link from 'next/link'
 
 interface PostedJobCardProps {
@@ -17,18 +17,14 @@ export function PostedJobCard({ job }: PostedJobCardProps) {
           </h3>
           <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">
-              <Users className="w-4 h-4" />
-              12 Applicants
-            </div>
-            <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               {job.timePosted}
             </div>
           </div>
         </div>
         <div className="flex gap-2">
-          <Link href={`/jobs/${job.id}/applications`}>
-            <Button variant="outline">View Applications</Button>
+          <Link href={`/jobs/${job._id}/applications`}>
+            <Button variant="outline">View</Button>
           </Link>
           <Button variant="outline">Edit</Button>
         </div>

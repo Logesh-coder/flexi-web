@@ -102,6 +102,15 @@ export const resetValidator = yup.object({
         .required("Confirm password is required"),
 });
 
+export const updatePasswordValidator = yup.object({
+    current: yup.string().required("Current password is required"),
+    password: passwordValidation,
+    confirmPassword: yup
+        .string()
+        .oneOf([yup.ref("password")], "Passwords must match")
+        .required("Confirm password is required"),
+});
+
 
 export const jobPostSchema = yup.object().shape({
     title: yup

@@ -1,5 +1,6 @@
 import { JobFilters } from '@/types/jobs';
 import { Search } from 'lucide-react';
+import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 import { JobCard } from './JobCard';
 import { JobCardSkeleton } from './JobCardSkeleton';
@@ -10,12 +11,13 @@ interface JobGridProps {
   loading: boolean;
   searchValue: string;
   setSearchValue: any;
+  hasMore: boolean;
+  loadMore: () => void;
 }
 
-export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loading }: JobGridProps) {
+export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loading, hasMore, loadMore }: JobGridProps) {
 
-  const jobsArray = jobs?.jobs as any ?? [];
-
+  const jobsArray = jobs as any ?? [];
 
   return (
     <>
@@ -41,6 +43,15 @@ export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loadi
                 {jobsArray.map((job: any) => (
                   <JobCard key={job._id} job={job} />
                 ))}
+                {hasMore && !loading && (
+                  <div className="text-center mt-8">
+                    <Button
+                      onClick={loadMore}
+                    >
+                      Load More
+                    </Button>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="text-center py-12">
