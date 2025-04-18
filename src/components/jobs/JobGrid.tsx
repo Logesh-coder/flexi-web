@@ -12,10 +12,11 @@ interface JobGridProps {
   searchValue: string;
   setSearchValue: any;
   hasMore: boolean;
+  type?: string;
   loadMore: () => void;
 }
 
-export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loading, hasMore, loadMore }: JobGridProps) {
+export function JobGrid({ type, searchValue, setSearchValue, updateFilter, jobs, loading, hasMore, loadMore }: JobGridProps) {
 
   const jobsArray = jobs as any ?? [];
 
@@ -41,7 +42,7 @@ export function JobGrid({ searchValue, setSearchValue, updateFilter, jobs, loadi
             {jobsArray && jobsArray.length > 0 ? (
               <div className="grid gap-6">
                 {jobsArray.map((job: any) => (
-                  <JobCard key={job._id} job={job} />
+                  <JobCard key={job._id} job={job} type={type} />
                 ))}
                 {hasMore && !loading && (
                   <div className="text-center mt-8">

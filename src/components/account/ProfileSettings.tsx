@@ -1,10 +1,9 @@
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
-import { Calendar as CalendarIcon, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
+import { Calendar as CalendarIcon, IndianRupee, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Calendar from 'react-calendar';
-import { Button } from '../ui/Button';
 import Input from '../ui/Input';
 
 interface Profile {
@@ -14,7 +13,8 @@ interface Profile {
   mobile: number;
   date_of_birth: string;
   instaProfileLink?: string;
-  profileUrl?: string;
+  // profileUrl?: string;
+  salary?: string;
 }
 
 export function ProfileSettings() {
@@ -23,7 +23,8 @@ export function ProfileSettings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  const [preview, setPreview] = useState<string | null>(null);
+  // const [preview, setPreview] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{ salary?: string; mobile?: string }>({});
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -39,14 +40,31 @@ export function ProfileSettings() {
       }
 
       const imageUrl = URL.createObjectURL(file);
-      setProfile((prev) => ({ ...prev, photo: file }));
-      setPreview(imageUrl);
+      // setProfile((prev) => ({ ...prev, photo: file }));
+      // setPreview(imageUrl);
     }
   };
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
   const handleSaveChanges = async () => {
+    const errors: { salary?: string; mobile?: string } = {};
+
+    // Salary Validation (if entered)
+    // const salary = Number(profile.salary);
+    // if (profile.salary && (isNaN(salary) || salary < 250)) {
+    //   errors.salary = 'Minimum Salary must be ₹250';
+    // }
+
+    // Mobile Validation (if entered)
+    const mobileStr = profile.mobile?.toString();
+    if (mobileStr && mobileStr.length !== 10) {
+      errors.mobile = 'Mobile number must be exactly 10 digits';
+    }
+
+    setValidationErrors(errors);
+
+    if (Object.keys(errors).length > 0) return;
     if (hasChanges) {
       try {
         const response = await editProfile(profile);
@@ -79,7 +97,9 @@ export function ProfileSettings() {
     const fetchProfile = async () => {
       try {
         const response = await myProfile();
-        setProfile(response?.data?.data);
+        const image = response?.data?.data?.profileUrl;
+        // setPreview(image);
+        // setProfile(response?.data?.data);
         setOriginalProfile(response?.data?.data)
       } catch (err: any) {
         console.error('Failed to load profile', err);
@@ -94,7 +114,7 @@ export function ProfileSettings() {
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
 
       <div className="space-y-6">
-        <div className="flex items-center space-x-4">
+        {/* <div className="flex items-center space-x-4">
           <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 overflow-hidden">
             {preview ? (
               <img src={preview} alt="Profile" className="w-full h-full object-cover" />
@@ -123,7 +143,6 @@ export function ProfileSettings() {
             </button>
           )}
 
-
           <input
             type="file"
             accept="image/*"
@@ -131,7 +150,7 @@ export function ProfileSettings() {
             onChange={handlePhotoChange}
             className="hidden"
           />
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
@@ -148,12 +167,19 @@ export function ProfileSettings() {
             disabled
             value={profile.email || ''}
           />
-          <Input
-            icon={Phone}
-            label="Mobile"
-            value={profile.mobile?.toString() || ''}
-            onChange={(e) => setProfile({ ...profile, mobile: Number(e.target.value) })}
-          />
+
+          <div>
+            <Input
+              icon={Phone}
+              label="Mobile"
+              value={profile.mobile?.toString() || ''}
+              onChange={(e) => setProfile({ ...profile, mobile: Number(e.target.value) })}
+            />
+
+            {validationErrors.mobile && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.mobile}</p>
+            )}
+          </div>
 
           {/* Date of Birth Input with Calendar */}
           <div className="relative">
@@ -206,12 +232,24 @@ export function ProfileSettings() {
             value={profile.instaProfileLink || ''}
             onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
           />
+
+
+          <div>
+            <Input
+              icon={IndianRupee}
+              label="Your Daily Salary"
+              type="number"
+              placeholder='(min. 250)'
+              value={profile.salary || ''}
+              onChange={(e) => setProfile({ ...profile, salary: e.target.value })}
+            />
+            {validationErrors.salary && (
+              <p className="text-red-500 text-sm mt-1">{validationErrors.salary}</p>
+            )}
+          </div>
         </div>
 
         <div className="flex justify-end">
-          {/* <Button type="submit" disabled={!hasChanges}>
-            Save Changes
-          </Button> */}
           <button
             disabled={!hasChanges}
             className={`text-sm px-3 py-2 rounded-lg text-white transition-colors duration-200 ${hasChanges ? 'bg-primary-500 hover:bg-primary-600' : 'bg-primary-300 cursor-not-allowed'

@@ -5,10 +5,11 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 interface JobCardProps {
-  job: Job
+  job: Job,
+  type?: string
 }
 
-export function JobCard({ job }: JobCardProps) {
+export function JobCard({ job, type }: JobCardProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const pathname = usePathname();

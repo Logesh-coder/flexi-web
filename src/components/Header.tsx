@@ -29,24 +29,24 @@ export function Header() {
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
-            <a
+            <Link
               href="/jobs"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
             >
               Find Work
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/workers"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              Browse Freelancers
-            </a>
-            <a
+              Find Workers
+            </Link>
+            <Link
               href="#"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">
