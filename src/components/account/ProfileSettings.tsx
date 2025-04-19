@@ -2,9 +2,10 @@ import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
 import { Calendar as CalendarIcon, IndianRupee, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import Input from '../ui/Input';
+import { Textarea } from '../ui/Textarea';
 
 interface Profile {
   _id: string;
@@ -15,6 +16,8 @@ interface Profile {
   instaProfileLink?: string;
   // profileUrl?: string;
   salary?: string;
+  city?: string;
+  area?: string;
 }
 
 export function ProfileSettings() {
@@ -23,27 +26,7 @@ export function ProfileSettings() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  // const [preview, setPreview] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<{ salary?: string; mobile?: string }>({});
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      const maxSizeInBytes = 2 * 1024 * 1024;
-
-      if (file.size > maxSizeInBytes) {
-        alert("File size should not exceed 2MB.");
-        return;
-      }
-
-      const imageUrl = URL.createObjectURL(file);
-      // setProfile((prev) => ({ ...prev, photo: file }));
-      // setPreview(imageUrl);
-    }
-  };
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
@@ -97,9 +80,7 @@ export function ProfileSettings() {
     const fetchProfile = async () => {
       try {
         const response = await myProfile();
-        const image = response?.data?.data?.profileUrl;
-        // setPreview(image);
-        // setProfile(response?.data?.data);
+        setProfile(response?.data?.data);
         setOriginalProfile(response?.data?.data)
       } catch (err: any) {
         console.error('Failed to load profile', err);
@@ -114,44 +95,6 @@ export function ProfileSettings() {
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
 
       <div className="space-y-6">
-        {/* <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 overflow-hidden">
-            {preview ? (
-              <img src={preview} alt="Profile" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-20 h-20 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                <User className="w-10 h-10 text-primary-600 dark:text-primary-400" />
-              </div>
-            )}
-          </div>
-          <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
-            Change Photo
-          </Button>
-          {preview && (
-            <button
-              onClick={() => {
-                setProfile(prev => {
-                  const updatedProfile = { ...prev };
-                  delete updatedProfile.profileUrl;
-                  return updatedProfile;
-                });
-                setPreview(null);
-              }}
-              className="text-red-400 underline text-sm ml-4"
-            >
-              Remove
-            </button>
-          )}
-
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            onChange={handlePhotoChange}
-            className="hidden"
-          />
-        </div> */}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             icon={User}
@@ -225,13 +168,6 @@ export function ProfileSettings() {
             </div>
           </div>
 
-          <Input
-            icon={LinkIcon}
-            label="Instagram Profile Link"
-            type="url"
-            value={profile.instaProfileLink || ''}
-            onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
-          />
 
 
           <div>
@@ -247,7 +183,33 @@ export function ProfileSettings() {
               <p className="text-red-500 text-sm mt-1">{validationErrors.salary}</p>
             )}
           </div>
+
+          <Input
+            icon={LinkIcon}
+            label="Instagram Profile Link"
+            type="url"
+            value={profile.instaProfileLink || ''}
+            onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
+          />
+
+          <Input
+            icon={LinkIcon}
+            label="your city"
+            type="text"
+            value={profile.city || ''}
+            onChange={(e) => setProfile({ ...profile, city: e.target.value })}
+          />
+
+          <Input
+            icon={LinkIcon}
+            label="your area"
+            type="text"
+            value={profile.area || ''}
+            onChange={(e) => setProfile({ ...profile, area: e.target.value })}
+          />
         </div>
+
+        <Textarea label='Your Working Domains (ex : catering service man or electrical helper) ' />
 
         <div className="flex justify-end">
           <button

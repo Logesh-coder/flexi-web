@@ -20,11 +20,13 @@ export function JobGrid({ type, searchValue, setSearchValue, updateFilter, jobs,
 
   const jobsArray = jobs as any ?? [];
 
+  console.log('jobs', jobs)
+
   return (
     <>
       <Input
         icon={Search}
-        placeholder="Search jobs title..."
+        placeholder={`Search ${type ? `${type} name` : 'jobs title'}...`}
         value={searchValue}
         className='mb-8'
         onChange={setSearchValue}
@@ -56,7 +58,7 @@ export function JobGrid({ type, searchValue, setSearchValue, updateFilter, jobs,
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-600 dark:text-gray-400">No jobs found</p>
+                <p className="text-gray-600 dark:text-gray-400">No {`${type ? `${type}` : 'jobs'}`} found</p>
               </div>
             )}
 

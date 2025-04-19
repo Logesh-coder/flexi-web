@@ -2,10 +2,10 @@
 
 import { JobGrid } from '@/components/jobs/JobGrid';
 import { WorkersFilters } from '@/components/workers/workerFilter';
-import { useJobFilters } from '@/hooks/useJobFilters';
+import { useWorkerFilters } from '@/hooks/useWorkerFilter';
 
 export default function JobsPage() {
-    const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore } = useJobFilters();
+    const { filters, updateFilter, workers, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore } = useWorkerFilters();
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -15,7 +15,7 @@ export default function JobsPage() {
                     <WorkersFilters filters={filters} updateFilter={updateFilter} search={search} setSearch={setSearch} />
                 </div>
                 <div className=" md:w-[70%] w-full">
-                    <JobGrid type='worker' updateFilter={updateFilter} jobs={jobs} loading={loading} searchValue={searchValue} setSearchValue={setSearchValue} loadMore={loadMore} hasMore={hasMore} />
+                    <JobGrid type='worker' updateFilter={updateFilter} jobs={workers} loading={loading} searchValue={searchValue} setSearchValue={setSearchValue} loadMore={loadMore} hasMore={hasMore} />
                 </div>
             </div>
         </div>
