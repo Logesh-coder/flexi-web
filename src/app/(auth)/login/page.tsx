@@ -40,12 +40,17 @@ export default function LoginPage() {
 
     try {
       const res = await loginService(data);
-      console.log('res', res)
 
       if (res?.status === 200) {
-        console.log('Registration successful:', res.data);
-        localStorage.setItem('TOKEN', res.data?.data)
-        router.push('/')
+        const token = res.data?.data?.token
+        const isActive = res.data?.data?.isActive
+
+        localStorage.setItem('TOKEN', token)
+        if (isActive) {
+          router.push('/')
+        } else {
+          router.push('/account/settings')
+        }
       }
 
     } catch (error) {

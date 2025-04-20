@@ -45,7 +45,9 @@ export function useWorkerFilters() {
             try {
                 setLoading(true)
 
-                const response = await getWorkersService({ ...filters, page, limit: 2 });
+                const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
+
+                const response = await getWorkersService({ ...filters, page, limit: limit });
 
                 const fetchedWorkers = response.data?.data?.workers || [];
                 const totalPages = response.data?.data?.pages || 1;

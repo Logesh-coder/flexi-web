@@ -1,7 +1,7 @@
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
-import { Calendar as CalendarIcon, IndianRupee, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
+import { Calendar as CalendarIcon, IndianRupee, LandPlot, Link as LinkIcon, Mail, MapPin, Phone, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import Input from '../ui/Input';
@@ -14,10 +14,11 @@ interface Profile {
   mobile: number;
   date_of_birth: string;
   instaProfileLink?: string;
-  // profileUrl?: string;
+  domain?: string;
   salary?: string;
   city?: string;
   area?: string;
+  isActive: Boolean
 }
 
 export function ProfileSettings() {
@@ -92,6 +93,19 @@ export function ProfileSettings() {
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+
+      {profile.isActive == false && (
+        <div id="alert-2" className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+          <svg className="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          </svg>
+          <span className="sr-only">Info</span>
+          <div className="ms-3 text-sm font-medium">
+            Your account is not active. Please enter your city, area, and work domains to activate it.
+          </div>
+        </div>
+      )}
+
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
 
       <div className="space-y-6">
@@ -168,8 +182,6 @@ export function ProfileSettings() {
             </div>
           </div>
 
-
-
           <div>
             <Input
               icon={IndianRupee}
@@ -193,7 +205,7 @@ export function ProfileSettings() {
           />
 
           <Input
-            icon={LinkIcon}
+            icon={MapPin}
             label="your city"
             type="text"
             value={profile.city || ''}
@@ -201,7 +213,7 @@ export function ProfileSettings() {
           />
 
           <Input
-            icon={LinkIcon}
+            icon={LandPlot}
             label="your area"
             type="text"
             value={profile.area || ''}
@@ -209,7 +221,11 @@ export function ProfileSettings() {
           />
         </div>
 
-        <Textarea label='Your Working Domains (ex : catering service man or electrical helper) ' />
+        <Textarea
+          label='Your Working Domains (ex : catering service man or electrical helper) '
+          value={profile.domain || ''}
+          onChange={(e) => setProfile({ ...profile, domain: e.target.value })}
+        />
 
         <div className="flex justify-end">
           <button

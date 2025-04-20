@@ -45,8 +45,9 @@ export function useJobFilters() {
     const fetchJobs = async () => {
       try {
         setLoading(true)
+        const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
 
-        const response = await getJobService({ ...filters, page, limit: 2 });
+        const response = await getJobService({ ...filters, page, limit: limit });
 
         const fetchedJobs = response.data?.data?.jobs || [];
         const totalPages = response.data?.data?.pages || 1;

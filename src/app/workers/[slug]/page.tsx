@@ -1,13 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import getSingleJobService from '@/services/get-single-job-service';
-import { CalendarDays, Clock, Heart, MapPin, Star, User } from 'lucide-react';
+import getSingleWorkerService from '@/services/get-single-worker';
+import { Heart, Mail, MapPin, User } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+export default function JobDetailPage() {
   const { slug } = useParams();
 
   const [data, setData] = useState<any>(null);
@@ -15,11 +15,13 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   const [error, setError] = useState<string | null>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
+  console.log('data', data)
+
   useEffect(() => {
     const fetchJob = async () => {
       try {
         setLoading(true);
-        const response = await getSingleJobService(slug as string);
+        const response = await getSingleWorkerService(slug as string);
         setData(response.data?.data);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load job');
@@ -35,7 +37,20 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
     setIsWishlisted((prev) => !prev);
   };
 
-  if (error) return <p className="text-red-500">{error}</p>;
+  const getAge = (dob: string) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -48,7 +63,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                 {loading ? (
                   <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
                 ) : (
-                  <span className='capitalize'>{data.title}</span>
+                  <span className='capitalize ' >{data.name}</span>
                 )}
               </h1>
 
@@ -65,21 +80,16 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-              <div className="flex items-center gap-1">
-                <CalendarDays className="w-5 h-5" />
-                {loading ? (
-                  <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-                ) : (
-                  data.date
-                )}
-              </div>
+
 
               <div className="flex items-center gap-1">
-                <Clock className="w-5 h-5" />
+                <Mail className="w-5 h-5" />
                 {loading ? (
                   <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                 ) : (
-                  `${data.durationStartTime} to ${data.durationEndTime}`
+                  <Link href={`mailto:${data.email}`} className="text-[15px] cursor-pointer">
+                    {data.email}
+                  </Link>
                 )}
               </div>
             </div>
@@ -88,25 +98,21 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
               {loading ? (
                 <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
-                `₹ ${data.budget}`
+                `₹ ${data.salary}`
               )}
             </h1>
 
             <div className="flex items-center gap-1 mt-4">
-              <MapPin className="w-5 h-5" />
+              <MapPin className="w-5 h-5  " />
               {loading ? (
                 <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
-                `${data.area}, ${data.city}`
+                <span className='capitalize text-sm '>
+                  {`${data.area}, ${data.city}`}
+                </span>
               )}
             </div>
-            <h4 className="text-[15px] ml-6 mt-2">
-              {loading ? (
-                <div className="h-4 w-36 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-              ) : (
-                data.landMark
-              )}
-            </h4>
+
 
             {loading ? (
               <div className="mt-4 space-y-2">
@@ -115,12 +121,12 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 w-5/6 rounded animate-pulse"></div>
               </div>
             ) : (
-              data.description && (
-                <div className="prose mt-4 dark:prose-invert max-w-none">
-                  <h2 className="text-xl font-semibold mb-1">Description</h2>
-                  <p className="whitespace-pre-line">{data.description}</p>
-                </div>
-              )
+              // data.description && (
+              <div className="prose mt-4 dark:prose-invert max-w-none">
+                <h2 className="text-xl font-semibold mb-1">Domains</h2>
+                <p className="whitespace-pre-line text-sm capitalize">{data.domain}</p>
+              </div>
+              // )
             )}
           </div>
         </div>
@@ -129,7 +135,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-4">
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-              About the Client
+              About the Worker
             </h2>
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
@@ -140,13 +146,16 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
                   {loading ? (
                     <div className="h-5 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                   ) : (
-                    data.createUserId.name
+                    data.name
                   )}
                 </h3>
-                <div className="flex items-center gap-2 mt-2">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span className="text-sm font-medium">4.9</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">(28 reviews)</span>
+                <div className="flex items-center gap-1 mt-2">
+                  {/* <Contact className="w-5 h-5" /> */}
+                  {loading ? (
+                    <div className="h-4 w-20  bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+                  ) : (
+                    <span className='text-sm' >{getAge(data.date_of_birth)} years old</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -155,7 +164,7 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
           {loading ? (
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
           ) : (
-            <Link href={`tel:${data.createUserId.mobile}`}>
+            <Link href={`tel:${data.mobile}`}>
               <Button className="w-full">Call Now</Button>
             </Link>
           )}

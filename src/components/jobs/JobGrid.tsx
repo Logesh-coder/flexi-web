@@ -16,11 +16,9 @@ interface JobGridProps {
   loadMore: () => void;
 }
 
-export function JobGrid({ type, searchValue, setSearchValue, updateFilter, jobs, loading, hasMore, loadMore }: JobGridProps) {
+export function JobGrid({ type, searchValue, setSearchValue, jobs, loading, hasMore, loadMore }: JobGridProps) {
 
   const jobsArray = jobs as any ?? [];
-
-  console.log('jobs', jobs)
 
   return (
     <>

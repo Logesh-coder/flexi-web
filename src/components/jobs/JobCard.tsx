@@ -51,51 +51,78 @@ export function JobCard({ job, type }: JobCardProps) {
         {/* Header */}
         <div className="mb-4">
           <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            <Link href={`/jobs/${job.slug}`} className="hover:underline">
-              {job.title}
+            <Link href={` ${type == 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`} `} className="hover:underline">
+              {type == 'worker' ? job.name : job.title}
             </Link>
           </h3>
 
           {/* Meta Info */}
-          <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
-            <span className="flex items-center gap-1.5">
-              <CalendarDays className="w-4 h-4 opacity-70" />
-              {job.date}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
-              {job.durationStartTime} to {job.durationEndTime}
-            </span>
-          </div>
+          {type !== 'worker' && (
+            <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="w-4 h-4 opacity-70" />
+                {job.date}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                {job.durationStartTime} to {job.durationEndTime}
+              </span>
+            </div>
+          )}
+
+          {type == 'worker' && (
+            <div className="my-2">
+              <div className="flex items-start gap-1.5 text-sm">
+                <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
+                <div>
+                  <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job.area}</span>
+                  {job.city && (
+                    <span className="text-gray-500 capitalize dark:text-gray-400">, {job.city}</span>
+                  )}
+                  {job.landMark && (
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">{job.landMark}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         {/* Budget */}
         <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white">
           <Link href={`/jobs/${job._id}`}>
-            ₹ {job.budget}
+            ₹ {type == 'worker' ? job.salary : job.budget}
           </Link>
         </h3>
 
         {/* Location */}
-        <div className="my-4">
-          <div className="flex items-start gap-1.5 text-sm">
-            <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
-            <div>
-              <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job.area}</span>
-              {job.city && (
-                <span className="text-gray-500 capitalize dark:text-gray-400">, {job.city}</span>
-              )}
-              {job.landMark && (
-                <p className="text-gray-500 dark:text-gray-400 mt-1">{job.landMark}</p>
-              )}
+
+        {type !== 'worker' && (
+          <div className="my-2">
+            <div className="flex items-start gap-1.5 text-sm">
+              <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
+              <div>
+                <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job.area}</span>
+                {job.city && (
+                  <span className="text-gray-500 capitalize dark:text-gray-400">, {job.city}</span>
+                )}
+                {job.landMark && (
+                  <p className="text-gray-500 dark:text-gray-400 mt-1">{job.landMark}</p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {type == 'worker' && (
+          <p className=' capitalize text-sm text-primary-400 ' >{job.domain}</p>
+        )}
 
         <div className="mt-auto">
           <div className="text-right text-xs text-gray-400 dark:text-gray-500">
             <Link
-              href={` ${pathname === '/jobs/post' ? "" : `/jobs/${job.slug}`}`}
+              href={` ${pathname === '/jobs/post' ? "" : ` ${type == 'worker' ? `/workers/${job.slug}` : ` /jobs/${job.slug}`}`}`}
               className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
             >
               View details

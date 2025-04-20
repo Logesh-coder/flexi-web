@@ -33,7 +33,7 @@ export function Header() {
               href="/jobs"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
             >
-              Find Work
+              Find Jobs
             </Link>
             <Link
               href="/workers"
