@@ -25,4 +25,5 @@ export interface JobFilters {
   maxBudget: string
   durationStartTime?: string
   durationEndTime?: string
+  id?: string
 }

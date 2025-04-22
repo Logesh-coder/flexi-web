@@ -10,6 +10,7 @@ export function useJobFilters() {
     minBudget: '',
     maxBudget: '',
     search: '',
+    id: ''
   })
 
   const [jobs, setJobs] = useState<Job[]>([])
@@ -17,7 +18,7 @@ export function useJobFilters() {
   const [search, setSearch] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
-  const [page, setPage] = useState(1); // current page
+  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -63,7 +64,7 @@ export function useJobFilters() {
     }
 
     fetchJobs()
-  }, [search, filters.search, page])
+  }, [search, filters.search, page, filters.id])
 
   return {
     filters,
