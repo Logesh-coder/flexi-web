@@ -10,7 +10,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 export default function PostedJobsPage() {
-
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,6 +40,9 @@ export default function PostedJobsPage() {
     fetchJobs()
   }, [page])
 
+  const handleLoadMore = () => {
+    setPage(prevPage => prevPage + 1)
+  }
 
   return (
     <div>
@@ -51,12 +53,22 @@ export default function PostedJobsPage() {
         </Link>
       </div>
 
-      {loading ? (
+
+      {loading && page === 1 ? (
         <>Loading</>
       ) : (
         <>
           {jobs.length > 0 ? (
-            <PostedJobList jobs={jobs} />
+            <>
+              <PostedJobList jobs={jobs} />
+              {hasMore && (
+                <div className="flex justify-center mt-6">
+                  <Button onClick={handleLoadMore} disabled={loading}>
+                    {loading ? 'Loading...' : 'Load More'}
+                  </Button>
+                </div>
+              )}
+            </>
           ) : (
             <EmptyState
               icon={Briefcase}
@@ -71,7 +83,6 @@ export default function PostedJobsPage() {
           )}
         </>
       )}
-
     </div>
   )
 }

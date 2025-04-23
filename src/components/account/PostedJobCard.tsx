@@ -26,7 +26,9 @@ export function PostedJobCard({ job }: PostedJobCardProps) {
           <Link href={`/jobs/${job.slug}`}>
             <Button variant="outline">View</Button>
           </Link>
-          <Button variant="outline">Edit</Button>
+          <Link href={`/jobs/edit/${job.slug}`}>
+            <Button variant="outline">Edit</Button>
+          </Link>
         </div>
       </div>
     </div>

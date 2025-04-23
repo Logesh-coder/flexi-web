@@ -1,5 +1,5 @@
 export interface Job {
-  _id: number
+  _id?: number
   title: string
   description: string
   city: string
@@ -11,10 +11,14 @@ export interface Job {
   experience: string
   durationStartTime: string
   durationEndTime: string
-  search: string
-  minBudget: string
-  maxBudget: string
-  slug: string
+  search?: string
+  minBudget?: string
+  maxBudget?: string
+  slug?: string
+  name?: string
+  isSaved?: string
+  salary?: string
+  domain?: string
 }
 
 export interface JobFilters {

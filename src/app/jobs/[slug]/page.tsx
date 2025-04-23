@@ -2,18 +2,22 @@
 
 import { Button } from '@/components/ui/Button';
 import getSingleJobService from '@/services/get-single-job-service';
+import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
 import { CalendarDays, Clock, Heart, MapPin, Star, User } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function JobDetailPage({ params }: { params: { id: string } }) {
+export default function JobDetailPage() {
   const { slug } = useParams();
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isSaved, setIsSaved] = useState(data?.isSaved || false);
+
+  console.log('data', data)
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -36,6 +40,21 @@ export default function JobDetailPage({ params }: { params: { id: string } }) {
   };
 
   if (error) return <p className="text-red-500">{error}</p>;
+
+
+  const toggleSave = async () => {
+    try {
+      if (isSaved) {
+        await removeWishlist(data);
+      } else {
+        await addWishlist(data);
+      }
+      setIsSaved(!isSaved);
+    } catch (error) {
+      console.error("Wishlist action failed:", error);
+    }
+  };
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

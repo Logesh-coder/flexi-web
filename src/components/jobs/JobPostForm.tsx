@@ -9,12 +9,15 @@ import Input from '../ui/Input'
 import { JobPreview } from './JobPreview'
 
 type JobPostFormProps = {
-  onSubmit: any
-  onChangePreview?: any
+  onSubmit: (data: JobFormInput) => void
+  onChangePreview?: (data: JobFormInput) => void
   loading: boolean
+  initialValues?: Partial<JobFormInput>
+  isEdit?: boolean
 }
 
-type JobFormInput = {
+export type JobFormInput = {
+  id?: string
   title: string
   description: string
   budget: string
@@ -34,17 +37,27 @@ export default function JobPostForm({
   onSubmit,
   loading,
   onChangePreview,
+  initialValues,
+  isEdit = false,
 }: JobPostFormProps) {
   const {
     handleSubmit,
     watch,
     control,
+    reset,
     formState: { errors },
   } = useForm<JobFormInput>({
     resolver: yupResolver(jobPostSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
+    defaultValues: initialValues,
   })
+
+  useEffect(() => {
+    if (initialValues) {
+      reset(initialValues)
+    }
+  }, [initialValues, reset])
 
   const watchedData = watch()
 
@@ -54,17 +67,24 @@ export default function JobPostForm({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+      >
         <div className="space-y-6">
           <Controller
             name="title"
             control={control}
             render={({ field }) => (
-              <Input label="Job Title" {...field} error={errors.title?.message} placeholder="Enter Title" />
+              <Input
+                label="Job Title"
+                {...field}
+                error={errors.title?.message}
+                placeholder="Enter Title"
+              />
             )}
           />
 
-          {/* Job Description */}
           <Controller
             name="description"
             control={control}
@@ -80,7 +100,6 @@ export default function JobPostForm({
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Budget */}
             <Controller
               name="budget"
               control={control}
@@ -95,7 +114,6 @@ export default function JobPostForm({
               )}
             />
 
-            {/* Date */}
             <Controller
               name="date"
               control={control}
@@ -113,7 +131,6 @@ export default function JobPostForm({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Budget */}
             <Controller
               name="durationStartTime"
               control={control}
@@ -121,14 +138,12 @@ export default function JobPostForm({
                 <Input
                   label="Start Time"
                   type="time"
-                  placeholder="Daily Salary (min. 250)"
                   {...field}
                   error={errors.durationStartTime?.message}
                 />
               )}
             />
 
-            {/* Date */}
             <Controller
               name="durationEndTime"
               control={control}
@@ -138,14 +153,11 @@ export default function JobPostForm({
                   type="time"
                   {...field}
                   error={errors.durationEndTime?.message}
-                  placeholder="Select Date"
-                  minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
                 />
               )}
             />
           </div>
 
-          {/* City */}
           <Controller
             name="city"
             control={control}
@@ -159,7 +171,6 @@ export default function JobPostForm({
             )}
           />
 
-          {/* area */}
           <Controller
             name="area"
             control={control}
@@ -173,7 +184,6 @@ export default function JobPostForm({
             )}
           />
 
-          {/* Land Mark */}
           <Controller
             name="landMark"
             control={control}
@@ -188,12 +198,11 @@ export default function JobPostForm({
             )}
           />
 
-          {/* Submit Button */}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Posting...' : 'Post Job'}
+            {loading ? (isEdit ? 'Updating...' : 'Posting...') : isEdit ? 'Update Job' : 'Post Job'}
           </Button>
         </div>
-      </form >
+      </form>
 
       <JobPreview jobData={watchedData} />
     </div>

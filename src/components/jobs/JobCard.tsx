@@ -1,23 +1,47 @@
-import { Job } from '@/types/jobs'
-import { CalendarDays, Clock, MapPin, MoreVertical } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
+import { Job } from '@/types/jobs';
+import { CalendarDays, Clock, MapPin, MoreVertical } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 interface JobCardProps {
-  job: Job,
-  type?: string
+  job: Job;
+  type?: string;
 }
 
 export function JobCard({ job, type }: JobCardProps) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [isSaved, setIsSaved] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(job.isSaved || false);
   const pathname = usePathname();
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const toggleSave = () => {
-    setIsSaved(!isSaved)
-    setMenuOpen(false)
-  }
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleSave = async () => {
+    try {
+      if (isSaved) {
+        await removeWishlist(job);
+      } else {
+        await addWishlist(job);
+      }
+      setIsSaved(!isSaved);
+      setMenuOpen(false);
+    } catch (error) {
+      console.error("Wishlist action failed:", error);
+    }
+  };
 
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
@@ -31,7 +55,10 @@ export function JobCard({ job, type }: JobCardProps) {
         </button>
 
         {menuOpen && (
-          <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-10">
+          <div
+            ref={menuRef}
+            className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-10"
+          >
             <button
               onClick={toggleSave}
               className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
@@ -51,8 +78,8 @@ export function JobCard({ job, type }: JobCardProps) {
         {/* Header */}
         <div className="mb-4">
           <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            <Link href={` ${type == 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`} `} className="hover:underline">
-              {type == 'worker' ? job.name : job.title}
+            <Link href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`} className="hover:underline">
+              {type === 'worker' ? job.name : job.title}
             </Link>
           </h3>
 
@@ -70,7 +97,7 @@ export function JobCard({ job, type }: JobCardProps) {
             </div>
           )}
 
-          {type == 'worker' && (
+          {type === 'worker' && (
             <div className="my-2">
               <div className="flex items-start gap-1.5 text-sm">
                 <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
@@ -86,18 +113,16 @@ export function JobCard({ job, type }: JobCardProps) {
               </div>
             </div>
           )}
-
         </div>
 
         {/* Budget */}
         <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white">
           <Link href={`/jobs/${job._id}`}>
-            ₹ {type == 'worker' ? job.salary : job.budget}
+            ₹ {type === 'worker' ? job.salary : job.budget}
           </Link>
         </h3>
 
         {/* Location */}
-
         {type !== 'worker' && (
           <div className="my-2">
             <div className="flex items-start gap-1.5 text-sm">
@@ -115,14 +140,14 @@ export function JobCard({ job, type }: JobCardProps) {
           </div>
         )}
 
-        {type == 'worker' && (
-          <p className=' capitalize text-sm text-primary-400 ' >{job.domain}</p>
+        {type === 'worker' && (
+          <p className="capitalize text-sm text-primary-400">{job.domain}</p>
         )}
 
         <div className="mt-auto">
           <div className="text-right text-xs text-gray-400 dark:text-gray-500">
             <Link
-              href={` ${pathname === '/jobs/post' ? "" : ` ${type == 'worker' ? `/workers/${job.slug}` : ` /jobs/${job.slug}`}`}`}
+              href={`${pathname === '/jobs/post' ? '' : `${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`}`}
               className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
             >
               View details
@@ -131,5 +156,5 @@ export function JobCard({ job, type }: JobCardProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
