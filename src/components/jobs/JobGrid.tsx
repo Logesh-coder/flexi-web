@@ -6,7 +6,7 @@ import { JobCard } from './JobCard';
 import { JobCardSkeleton } from './JobCardSkeleton';
 
 interface JobGridProps {
-  updateFilter: (key: keyof JobFilters, value: string) => void;
+  updateFilter?: (key: keyof JobFilters, value: string) => void;
   jobs: any;
   loading: boolean;
   searchValue: string;

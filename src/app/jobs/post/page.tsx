@@ -27,6 +27,10 @@ export default function PostJobPage() {
       setError(errorMSG);
     } finally {
       setLoading(false);
+      window.scrollTo({
+        top: 10,
+        behavior: 'smooth',
+      });
     }
   };
 

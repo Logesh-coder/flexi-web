@@ -11,6 +11,8 @@ export const removeWishlist = (data: Job) => {
     });
 };
 
-export const getWishlist = () => {
-    return AxiosInstance.get('/user/wishlist');
+export const getWishlist = ({ page = 1, limit = 10, search = '' }) => {
+    return AxiosInstance.get('/user/wishlist', {
+        params: { page, limit, search },
+    });
 };

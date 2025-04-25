@@ -1,11 +1,12 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
+import ShareButtons from '@/components/ui/ShareButtons';
 import getSingleJobService from '@/services/get-single-job-service';
 import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
 import { CalendarDays, Clock, Heart, MapPin, Star, User } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function JobDetailPage() {
@@ -14,10 +15,15 @@ export default function JobDetailPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isSaved, setIsSaved] = useState(data?.isSaved || false);
+  const [isSaved, setIsSaved] = useState<boolean>(data?.isSaved || false);
 
-  console.log('data', data)
+  const jobUrl = usePathname()
+
+  useEffect(() => {
+    if (typeof data?.isSaved === 'boolean') {
+      setIsSaved(data.isSaved);
+    }
+  }, [data?.isSaved]);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -35,14 +41,10 @@ export default function JobDetailPage() {
     if (slug) fetchJob();
   }, [slug]);
 
-  const toggleWishlist = () => {
-    setIsWishlisted((prev) => !prev);
-  };
-
   if (error) return <p className="text-red-500">{error}</p>;
 
 
-  const toggleSave = async () => {
+  const toggleWishlist = async () => {
     try {
       if (isSaved) {
         await removeWishlist(data);
@@ -54,7 +56,6 @@ export default function JobDetailPage() {
       console.error("Wishlist action failed:", error);
     }
   };
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -71,16 +72,19 @@ export default function JobDetailPage() {
                 )}
               </h1>
 
-              <span
-                onClick={toggleWishlist}
-                className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isWishlisted ? 'text-red-500' : 'text-gray-400'
-                  }`}
-              >
-                <Heart
-                  className={`w-6 h-6 ${isWishlisted ? 'fill-red-500' : 'fill-transparent'
-                    } transition-all duration-300`}
-                />
-              </span>
+              <div className="flex">
+                <span
+                  onClick={toggleWishlist}
+                  className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isSaved ? 'text-red-500' : 'text-gray-400'
+                    }`}
+                >
+                  <Heart
+                    className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'
+                      } transition-all duration-300`}
+                  />
+                </span>
+                <ShareButtons url={jobUrl} title="Apply for this amazing job!" />
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
