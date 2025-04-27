@@ -1,3 +1,7 @@
+export interface JobUser {
+  mobile: number
+}
+
 export interface Job {
   _id?: number
   title: string
@@ -19,6 +23,7 @@ export interface Job {
   isSaved?: string
   salary?: string
   domain?: string
+  createUser?: JobUser
 }
 
 export interface JobFilters {

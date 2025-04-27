@@ -20,6 +20,7 @@ export function useJobFilters() {
   const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [limit, setLimit] = useState(0);
 
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -43,12 +44,13 @@ export function useJobFilters() {
   }
 
   useEffect(() => {
+    if (limit <= 0) return;
     const fetchJobs = async () => {
       try {
         setLoading(true)
-        const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
+        // const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
 
-        const response = await getJobService({ ...filters, page, limit: limit });
+        const response = await getJobService({ ...filters, page, limit });
 
         const fetchedJobs = response.data?.data?.jobs || [];
         const totalPages = response.data?.data?.pages || 1;
@@ -64,7 +66,7 @@ export function useJobFilters() {
     }
 
     fetchJobs()
-  }, [search, filters.search, page, filters.id])
+  }, [search, filters.search, page, filters.id, limit])
 
   return {
     filters,
@@ -78,5 +80,6 @@ export function useJobFilters() {
     setSearchValue: handleSearchChange,
     hasMore,
     loadMore: () => setPage(prev => prev + 1),
+    setLimit
   }
 }

@@ -1,87 +1,76 @@
-import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
+import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
-import { CalendarDays, Clock, MapPin, MoreVertical } from 'lucide-react';
+import axios from 'axios';
+import { CalendarDays, Clock, Heart, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
+import ShareButtons from '../ui/ShareButtons';
 
 interface JobCardProps {
   job: Job;
-  type?: string;
+  type?: string; //worker
 }
 
 export function JobCard({ job, type }: JobCardProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
-  const pathname = usePathname();
-  const menuRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const toggleSave = async () => {
+  const toggleWishlist = async () => {
     try {
       if (isSaved) {
-        await removeWishlist(job);
+        if (type === 'worker') {
+          await removeWorkerWishlist(job);
+        } else {
+          await removeWishlist(job);
+        }
       } else {
-        await addWishlist(job);
+        if (type === 'worker') {
+          await addWorkerWishlist(job);
+        } else {
+          await addWishlist(job);
+        }
       }
       setIsSaved(!isSaved);
-      setMenuOpen(false);
-    } catch (error) {
-      console.error("Wishlist action failed:", error);
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        const tokenError = error.response?.data?.message;
+        if (tokenError === 'Authorization token is required') {
+          console.log('coming');
+          toast.error('Please sign in to add items to your wishlist.');
+        }
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
     }
   };
 
+  const userMobileNumber = job?.createUser?.mobile
+
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
-      {/* Top-right menu */}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={() => setMenuOpen((prev) => !prev)}
-          className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-        >
-          <MoreVertical className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        </button>
-
-        {menuOpen && (
-          <div
-            ref={menuRef}
-            className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg z-10"
-          >
-            <button
-              onClick={toggleSave}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              {isSaved ? 'Unsave Job' : 'Save Job'}
-            </button>
-            <button
-              className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
-            >
-              Remove
-            </button>
-          </div>
-        )}
-      </div>
-
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="mb-4">
-          <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-            <Link href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`} className="hover:underline">
-              {type === 'worker' ? job.name : job.title}
-            </Link>
-          </h3>
+        <div className="mb-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              <Link href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`} className="hover:underline">
+                {type === 'worker' ? job.name : job.title}
+              </Link>
+            </h3>
+            <div className="flex">
+              <span
+                onClick={toggleWishlist}
+                className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isSaved ? 'text-red-500' : 'text-gray-400'
+                  }`}
+              >
+                <Heart
+                  className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'
+                    } transition-all duration-300`}
+                />
+              </span>
+              <ShareButtons url={`/jobs/${job.slug}`} />
+            </div>
+          </div>
 
           {/* Meta Info */}
           {type !== 'worker' && (
@@ -141,20 +130,13 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         {type === 'worker' && (
-          <p className="capitalize text-sm text-primary-400">{job.domain}</p>
+          <p className="capitalize text-sm mb-2 text-primary-400">{job.domain}</p>
         )}
 
-        <div className="mt-auto">
-          <div className="text-right text-xs text-gray-400 dark:text-gray-500">
-            <Link
-              href={`${pathname === '/jobs/post' ? '' : `${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`}`}
-              className="text-primary-600 dark:text-primary-400 hover:underline font-medium"
-            >
-              View details
-            </Link>
-          </div>
+        <div className="text-end">
+          <Link href={`tel:${userMobileNumber}`} className='text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500 '>Call Now</Link>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

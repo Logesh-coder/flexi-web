@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 const navItems = [
   { href: '/account/settings', label: 'Settings', icon: Settings },
-  { href: '/account/saved', label: 'Saved', icon: Heart },
+  { href: '/account/saved', label: 'Wishlist', icon: Heart },
   { href: '/account/jobs', label: 'Posted Jobs', icon: Briefcase },
 ]
 

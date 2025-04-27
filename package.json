@@ -20,6 +20,7 @@
     "react-calendar": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.45.0",
+    "react-hot-toast": "^2.5.2",
     "react-share": "^5.2.2",
     "react-time-picker": "^7.0.0",
     "yup": "^1.0.0"

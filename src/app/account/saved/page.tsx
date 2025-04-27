@@ -5,63 +5,86 @@ import { JobCard } from '@/components/jobs/JobCard';
 import { JobCardSkeleton } from '@/components/jobs/JobCardSkeleton';
 import { Button } from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { getWishlist } from '@/services/wishlist/whishlist';
+import { getWishlist, getWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
 import { Bookmark, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export default function SavedJobsPage() {
+export default function SavedItemsPage() {
   const [searchValue, setSearchValue] = useState('');
-  const [savedJobs, setSavedJobs] = useState<Job[]>([]);
+  const [savedItems, setSavedItems] = useState<Job[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const type = 'job';
+  const [tab, setTab] = useState<'job' | 'worker'>('job');
 
   useEffect(() => {
     setPage(1);
-    setSavedJobs([]);
-  }, [searchValue]);
+    setSavedItems([]);
+  }, [searchValue, tab]);
 
   useEffect(() => {
-    const fetchSavedJobs = async () => {
+    const fetchSavedItems = async () => {
       setLoading(true);
       try {
         const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || '10', 10);
-        const response = await getWishlist({ page, limit, search: searchValue });
-        const newJobs = response?.data?.data?.wishlistItems || [];
+        let response;
 
-        if (page === 1) {
-          setSavedJobs(newJobs);
+        if (tab === 'job') {
+          response = await getWishlist({ page, limit, search: searchValue });
         } else {
-          setSavedJobs((prev) => [...prev, ...newJobs]);
+          response = await getWorkerWishlist({ page, limit, search: searchValue });
         }
 
-        setHasMore(newJobs.length === limit);
+        const newItems = response?.data?.data?.wishlistItems || [];
+
+        if (page === 1) {
+          setSavedItems(newItems);
+        } else {
+          setSavedItems((prev) => [...prev, ...newItems]);
+        }
+
+        setHasMore(newItems.length === limit);
       } catch (error) {
-        console.error('Failed to fetch saved jobs:', error);
+        console.error('Failed to fetch saved items:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSavedJobs();
-  }, [page, searchValue]);
+    fetchSavedItems();
+  }, [page, searchValue, tab]);
 
   const loadMore = () => {
     setPage((prev) => prev + 1);
   };
+
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-8 text-gray-900 dark:text-white">Saved Jobs</h1>
+      {/* Tabs */}
+      <div className="flex space-x-4 mb-8">
+        <button
+          className={`py-2 px-6 rounded-full text-sm font-semibold ${tab === 'job' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-800'
+            }`}
+          onClick={() => setTab('job')}
+        >
+          Jobs
+        </button>
+        <button
+          className={`py-2 px-6 rounded-full text-sm font-semibold ${tab === 'worker' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-800'
+            }`}
+          onClick={() => setTab('worker')}
+        >
+          Workers
+        </button>
+      </div>
 
       <Input
         icon={Search}
-        placeholder="Search Job Title"
+        placeholder={tab === 'job' ? 'Search Job Title' : 'Search Worker Name'}
         value={searchValue}
         className="mb-8"
-        onChange={(e) => setSearchValue(e.target.value)} // ✅ fixed
+        onChange={(e) => setSearchValue(e.target.value)}
       />
 
       {loading ? (
@@ -70,10 +93,10 @@ export default function SavedJobsPage() {
             <JobCardSkeleton key={i} />
           ))}
         </div>
-      ) : savedJobs.length > 0 ? (
+      ) : savedItems.length > 0 ? (
         <div className="grid gap-6">
-          {savedJobs.map((job: any) => (
-            <JobCard key={job._id} job={job} type={type} />
+          {savedItems.map((item: any) => (
+            <JobCard key={item._id} job={item} type={tab} />
           ))}
           {hasMore && (
             <div className="text-center mt-8">
@@ -84,8 +107,8 @@ export default function SavedJobsPage() {
       ) : (
         <EmptyState
           icon={Bookmark}
-          title="No saved jobs"
-          description="Jobs you save will appear here"
+          title={tab === 'job' ? 'No saved jobs' : 'No saved workers'}
+          description={tab === 'job' ? 'Jobs you save will appear here.' : 'Workers you save will appear here.'}
         />
       )}
     </div>

@@ -3,9 +3,14 @@
 import { JobFilters } from '@/components/jobs/JobFilters';
 import { JobGrid } from '@/components/jobs/JobGrid';
 import { useJobFilters } from '@/hooks/useJobFilters';
+import { useEffect } from 'react';
 
 export default function JobsPage() {
-  const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore } = useJobFilters();
+  const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore, setLimit } = useJobFilters();
+
+  useEffect(() => {
+    setLimit(parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || '6', 10))
+  }, [])
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
