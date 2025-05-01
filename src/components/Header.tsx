@@ -9,6 +9,7 @@ export function Header() {
   const [isLogged, setIsLogged] = useState<string | null>(null);
   const pathname = usePathname();
 
+
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
     setIsLogged(token);
@@ -31,13 +32,13 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/jobs"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/jobs' && 'text-primary-500 dark:text-primary-500 '} `}
             >
               Find Jobs
             </Link>
             <Link
               href="/workers"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/workers' && 'text-primary-500 dark:text-primary-500'} `}
             >
               Find Workers
             </Link>

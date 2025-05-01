@@ -24,7 +24,7 @@ export function JobGrid({ type, searchValue, setSearchValue, jobs, loading, hasM
     <>
       <Input
         icon={Search}
-        placeholder={`Search ${type ? `${type} name` : 'jobs title'}...`}
+        placeholder={`Search ${type ? `${type} domains` : 'jobs title'}...`}
         value={searchValue}
         className='mb-8'
         onChange={setSearchValue}
@@ -59,7 +59,6 @@ export function JobGrid({ type, searchValue, setSearchValue, jobs, loading, hasM
                 <p className="text-gray-600 dark:text-gray-400">No {`${type ? `${type}` : 'jobs'}`} found</p>
               </div>
             )}
-
           </>
         </div>
       )}
