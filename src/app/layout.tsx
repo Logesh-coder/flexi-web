@@ -1,4 +1,3 @@
-'use client'
 import { Header } from '@/components/Header'
 import { ThemeProvider } from '@/providers/theme-provider'
 import type { Metadata } from 'next'

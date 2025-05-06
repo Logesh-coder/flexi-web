@@ -22,4 +22,5 @@ const getWorkersService = (filters: WorkerFiltersProps) => {
 
     return res;
 };
+
 export default getWorkersService;
