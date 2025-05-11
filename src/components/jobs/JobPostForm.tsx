@@ -12,7 +12,8 @@ type JobPostFormProps = {
   onSubmit: (data: JobFormInput) => void
   onChangePreview?: (data: JobFormInput) => void
   loading: boolean
-  initialValues?: Partial<JobFormInput>
+  initialValues?: any
+  // initialValues?: Partial<JobFormInput>
   isEdit?: boolean
 }
 

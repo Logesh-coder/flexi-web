@@ -1,6 +1,6 @@
 import { AxiosInstance } from './api';
 
-const getSingleJobService = (slug: string) => {
+const getSingleJobService = (slug: any) => {
 
     const res = AxiosInstance.get(`/user/job/${slug}`);
 
