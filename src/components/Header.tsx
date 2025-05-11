@@ -23,7 +23,7 @@ export function Header() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-2xl font-bold text-primary-600 dark:text-primary-400"
+              className="text-2xl font-bold text-primary-700 dark:text-primary-400"
             >
               Flxei
             </Link>
