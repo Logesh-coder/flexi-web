@@ -6,4 +6,5 @@ const jobUpdateService = (slug: any, data: Job) => {
     return res;
 };
 
+
 export default jobUpdateService;
