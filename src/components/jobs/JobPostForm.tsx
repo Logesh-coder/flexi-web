@@ -1,9 +1,10 @@
 'use client'
 import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/Textarea'
+import { getLocationService } from '@/services/get-location'
 import { jobPostSchema } from '@/validators/auth.validation'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../ui/Input'
 import { JobPreview } from './JobPreview'
@@ -41,6 +42,8 @@ export default function JobPostForm({
   initialValues,
   isEdit = false,
 }: JobPostFormProps) {
+  const [location, setLocation] = useState([]);
+
   const {
     handleSubmit,
     watch,
@@ -61,10 +64,31 @@ export default function JobPostForm({
   }, [initialValues, reset])
 
   const watchedData = watch()
+  // const  clg = watchedData && watchedData()
 
   useEffect(() => {
     onChangePreview?.(watchedData)
-  }, [watchedData, onChangePreview])
+  }, [watchedData, onChangePreview]);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        // const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
+
+        const response = await getLocationService();
+
+        // console.log('response', response?.data?.data)
+
+        setLocation(response?.data?.data);
+
+      } catch (err: any) {
+        // setError(err.message || 'Failed to fetch jobs')
+        console.log('err', err)
+      }
+    }
+
+    fetchJobs()
+  }, []);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -163,27 +187,62 @@ export default function JobPostForm({
             name="city"
             control={control}
             render={({ field }) => (
-              <Input
-                label="City"
-                {...field}
-                placeholder="Enter City"
-                error={errors.city?.message}
-              />
+              <div>
+                <label className="block text-sm font-medium mb-1">City</label>
+                <select
+                  {...field}
+                  className="w-full border rounded px-3 py-2"
+                  onChange={(e) => {
+                    field.onChange(e.target.value)
+                    control.setValue("area", "")
+                  }}
+                >
+                  <option value="">Select a city</option>
+                  {location.map((loc: any) => (
+                    <option key={loc.cityId} value={loc.cityName}>
+                      {loc.cityName}
+                    </option>
+                  ))}
+                </select>
+                {errors.city && (
+                  <p className="text-red-500 text-sm">{errors.city.message}</p>
+                )}
+              </div>
             )}
           />
+
 
           <Controller
             name="area"
             control={control}
-            render={({ field }) => (
-              <Input
-                label="Area"
-                {...field}
-                placeholder="Enter Area"
-                error={errors.area?.message}
-              />
-            )}
+            render={({ field }) => {
+              const selectedCity = watch("city")
+              const selectedLocation = location.find((loc: any) => loc.cityName === selectedCity)
+
+              return (
+                <div>
+                  <label className="block text-sm font-medium mb-1">Area</label>
+                  <select
+                    {...field}
+                    className="w-full border rounded px-3 py-2"
+                    disabled={!selectedLocation}
+                  >
+                    <option value="">Select an area</option>
+                    {selectedLocation?.areas.map((area: any) => (
+                      <option key={area.id} value={area.name}>
+                        {area.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.area && (
+                    <p className="text-red-500 text-sm">{errors.area.message}</p>
+                  )}
+                </div>
+              )
+            }}
           />
+
+
 
           <Controller
             name="landMark"

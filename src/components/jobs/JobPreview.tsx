@@ -13,7 +13,6 @@ export function JobPreview({ jobData }: JobPreviewProps) {
 
       <JobCard job={jobData} />
 
-
       {/* Help text */}
       <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 text-center">
         This is how your job will appear to applicants

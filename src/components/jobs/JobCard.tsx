@@ -9,7 +9,7 @@ import ShareButtons from '../ui/ShareButtons';
 
 interface JobCardProps {
   job: Job;
-  type?: string; //worker
+  type?: string;
 }
 
 export function JobCard({ job, type }: JobCardProps) {
