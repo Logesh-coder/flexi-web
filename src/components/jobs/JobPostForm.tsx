@@ -49,6 +49,7 @@ export default function JobPostForm({
     watch,
     control,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<JobFormInput>({
     resolver: yupResolver(jobPostSchema),
@@ -191,11 +192,13 @@ export default function JobPostForm({
                 <label className="block text-sm font-medium mb-1">City</label>
                 <select
                   {...field}
-                  className="w-full border rounded px-3 py-2"
+                  value={field.value || ""}
                   onChange={(e) => {
                     field.onChange(e.target.value)
-                    control.setValue("area", "")
+                    setValue("area", "") // correct use of setValue
                   }}
+                  className="w-full border rounded-lg px-3 py-[10px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+          dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select a city</option>
                   {location.map((loc: any) => (
@@ -204,38 +207,41 @@ export default function JobPostForm({
                     </option>
                   ))}
                 </select>
-                {errors.city && (
-                  <p className="text-red-500 text-sm">{errors.city.message}</p>
+                {errors.city?.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
                 )}
               </div>
             )}
           />
-
 
           <Controller
             name="area"
             control={control}
             render={({ field }) => {
               const selectedCity = watch("city")
-              const selectedLocation = location.find((loc: any) => loc.cityName === selectedCity)
+              const selectedLocation = location.find(
+                (loc: any) => loc.cityName === selectedCity
+              )
 
               return (
                 <div>
                   <label className="block text-sm font-medium mb-1">Area</label>
                   <select
                     {...field}
-                    className="w-full border rounded px-3 py-2"
+                    value={field.value || ""}
                     disabled={!selectedLocation}
+                    className="w-full border rounded-lg px-3 py-[10px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500
+            dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   >
                     <option value="">Select an area</option>
                     {selectedLocation?.areas.map((area: any) => (
-                      <option key={area.id} value={area.name}>
+                      <option key={area.id} value={area.name} className="capitalize">
                         {area.name}
                       </option>
                     ))}
                   </select>
-                  {errors.area && (
-                    <p className="text-red-500 text-sm">{errors.area.message}</p>
+                  {errors.area?.message && (
+                    <p className="text-red-500 text-sm mt-1">{errors.area.message}</p>
                   )}
                 </div>
               )
