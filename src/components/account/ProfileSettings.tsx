@@ -1,9 +1,10 @@
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
-import { Calendar as CalendarIcon, IndianRupee, LandPlot, Link as LinkIcon, Mail, MapPin, Phone, User } from 'lucide-react';
+import { Calendar as CalendarIcon, IndianRupee, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
+import { CityAreaSelector } from '../CityAreaSelector';
 import Input from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 
@@ -31,14 +32,10 @@ export function ProfileSettings() {
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
+  console.log('profile', profile)
+
   const handleSaveChanges = async () => {
     const errors: { salary?: string; mobile?: string } = {};
-
-    // Salary Validation (if entered)
-    // const salary = Number(profile.salary);
-    // if (profile.salary && (isNaN(salary) || salary < 250)) {
-    //   errors.salary = 'Minimum Salary must be ₹250';
-    // }
 
     // Mobile Validation (if entered)
     const mobileStr = profile.mobile?.toString();
@@ -89,7 +86,7 @@ export function ProfileSettings() {
     };
 
     fetchProfile();
-  }, []);
+  }, [alertMessage]);
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
@@ -204,21 +201,7 @@ export function ProfileSettings() {
             onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
           />
 
-          <Input
-            icon={MapPin}
-            label="your city"
-            type="text"
-            value={profile.city || ''}
-            onChange={(e) => setProfile({ ...profile, city: e.target.value })}
-          />
-
-          <Input
-            icon={LandPlot}
-            label="your area"
-            type="text"
-            value={profile.area || ''}
-            onChange={(e) => setProfile({ ...profile, area: e.target.value })}
-          />
+          <CityAreaSelector profile={profile} setProfile={setProfile} />
         </div>
 
         <Textarea

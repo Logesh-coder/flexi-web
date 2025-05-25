@@ -1,5 +1,6 @@
-import { SlidersHorizontal } from 'lucide-react';
-import { useState } from 'react';
+import { getLocationService } from '@/services/get-location';
+import { ChevronDown, SlidersHorizontal } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import 'react-calendar/dist/Calendar.css';
 import Input from '../ui/Input';
 
@@ -11,8 +12,21 @@ interface JobFilterProps {
 }
 
 export function WorkersFilters({ filters, updateFilter, search, setSearch }: JobFilterProps) {
+    const [locations, setLocations] = useState([]);
+    const [selectedCity, setSelectedCity] = useState<any>(null);
 
-    const [showCalendar, setShowCalendar] = useState(false);
+    useEffect(() => {
+        const fetchLocations = async () => {
+            try {
+                const response = await getLocationService();
+                setLocations(response?.data?.data || []);
+            } catch (err) {
+                console.error('Failed to fetch locations', err);
+            }
+        };
+
+        fetchLocations();
+    }, []);
 
     const clearFilters = () => {
         const emptyFilters: any = {
@@ -27,9 +41,9 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
             updateFilter(key as keyof any, '');
         }
 
-        setSearch(!search)
+        setSelectedCity(null);
+        setSearch(!search);
     };
-
 
     return (
         <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -39,27 +53,49 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
             </div>
 
             <div className="space-y-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        City
-                    </label>
-                    <Input
-                        placeholder="e.g. Remote, chennai"
+                {/* City Dropdown */}
+                <div className="relative">
+                    <select
                         value={filters.city}
-                        onChange={(e) => updateFilter('city', e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Area
-                    </label>
-                    <Input
-                        placeholder="enetr a area"
-                        value={filters.area}
-                        onChange={(e) => updateFilter('area', e.target.value)}
-                    />
+                        onChange={(e) => {
+                            const cityName = e.target.value;
+                            const cityData = locations.find((loc: any) => loc.cityName === cityName);
+                            setSelectedCity(cityData);
+                            updateFilter('city', cityName);
+                            updateFilter('area', '');
+                        }}
+                        className="w-full outline-none appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:bg-gray-700  dark:text-gray-300"
+                    >
+                        <option value="">Select a city</option>
+                        {locations.map((loc: any) => (
+                            <option key={loc.cityId} value={loc.cityName}>
+                                {loc.cityName}
+                            </option>
+                        ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
                 </div>
 
+                {/* Area Dropdown */}
+                <div className="relative">
+                    <select
+                        value={filters.area}
+                        onChange={(e) => updateFilter('area', e.target.value)}
+                        disabled={!selectedCity}
+                        className="w-full dark:bg-gray-700 dark:text-gray-300 appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    >
+                        <option value="">Select an area</option>
+                        {selectedCity?.areas?.map((area: any) => (
+                            <option key={area.id} value={area.name} className="capitalize">
+                                {area.name}
+                            </option>
+                        ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
+                </div>
+
+
+                {/* Budget Range */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Budget Range
@@ -78,12 +114,16 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                     </div>
                 </div>
             </div>
+
+            {/* Clear Filter */}
             <button
-                className='my-2 mt-4 text-end w-full capitalize text-sm text-red-600 hover:underline'
+                className="my-2 mt-4 text-end w-full capitalize text-sm text-red-600 hover:underline"
                 onClick={clearFilters}
             >
                 clear filter
             </button>
+
+            {/* Search Button */}
             <div>
                 <button
                     onClick={() => setSearch(!search)}
@@ -92,6 +132,6 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                     Search
                 </button>
             </div>
-        </div >
-    )
+        </div>
+    );
 }

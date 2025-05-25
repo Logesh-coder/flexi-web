@@ -58,6 +58,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 readOnly
                 value={value || ''}
                 onClick={() => setShowCalendar((prev) => !prev)}
+                onWheel={(e) => e.currentTarget.blur()}
                 className={`block w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'
                   } dark:${error ? 'border-red-500' : 'border-gray-600'}
                   bg-white dark:bg-gray-700 
@@ -125,6 +126,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                 type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
                 value={value}
                 onChange={onChange}
+                onWheel={(e) => e.currentTarget.blur()}
                 className={`block w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'
                   } dark:${error ? 'border-red-500' : 'border-gray-600'}
                 bg-white dark:bg-gray-700 

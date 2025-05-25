@@ -43,10 +43,10 @@ export function Header() {
               Find Workers
             </Link>
             <Link
-              href="#"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+              href="/help-an-support"
+              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/help-an-support' && 'text-primary-500 dark:text-primary-500'} `}
             >
-              Contact Us
+              Help & Support
             </Link>
           </div>
 

@@ -1,8 +1,9 @@
 import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
 import axios from 'axios';
-import { CalendarDays, Clock, Heart, MapPin } from 'lucide-react';
+import { CalendarDays, Clock, Heart, MapPin, Share2 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import ShareButtons from '../ui/ShareButtons';
@@ -14,6 +15,9 @@ interface JobCardProps {
 
 export function JobCard({ job, type }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
+  const path = usePathname();
+
+  const isPostingPage = path === '/jobs/post';
 
   const toggleWishlist = async () => {
     try {
@@ -44,7 +48,9 @@ export function JobCard({ job, type }: JobCardProps) {
     }
   };
 
-  const userMobileNumber = job?.createUser?.mobile
+  const userMobileNumber = job?.contact || job?.createUser?.mobile;
+
+  console.log('userMobileNumber', userMobileNumber)
 
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
@@ -53,22 +59,30 @@ export function JobCard({ job, type }: JobCardProps) {
         <div className="mb-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
-              <Link href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`} className="hover:underline">
+              <Link
+                href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`}
+                className="hover:underline"
+                onClick={(e) => isPostingPage && e.preventDefault()}
+              >
                 {type === 'worker' ? job.name : job.title}
               </Link>
+
             </h3>
             <div className="flex">
               <span
-                onClick={toggleWishlist}
+                onClick={() => !isPostingPage && toggleWishlist()}
                 className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isSaved ? 'text-red-500' : 'text-gray-400'
-                  }`}
+                  } ${isPostingPage ? 'pointer-events-none opacity-50' : ''}`}
               >
                 <Heart
-                  className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'
-                    } transition-all duration-300`}
+                  className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'} transition-all duration-300`}
                 />
               </span>
-              <ShareButtons url={`/jobs/${job.slug}`} />
+
+              {isPostingPage ? <Share2
+                className="w-6 h-6 cursor-pointer ml-4 text-gray-400 hover:text-primary-400"
+              /> : <ShareButtons url={`/jobs/${job.slug}`} />}
+
             </div>
           </div>
 
@@ -134,7 +148,12 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         <div className="text-end">
-          <Link href={`tel:${userMobileNumber}`} className='text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500 '>Call Now</Link>
+          <Link
+            href={`tel:${userMobileNumber}`}
+            className="text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500"
+          >
+            Call Now
+          </Link>
         </div>
       </div>
     </div >

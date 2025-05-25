@@ -24,6 +24,7 @@ export interface Job {
   salary?: string
   domain?: string
   createUser?: JobUser
+  contact?: string
 }
 
 export interface JobFilters {

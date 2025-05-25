@@ -4,6 +4,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { getLocationService } from '@/services/get-location'
 import { jobPostSchema } from '@/validators/auth.validation'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { ChevronDown } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Input from '../ui/Input'
@@ -25,6 +26,7 @@ export type JobFormInput = {
   budget: string
   date: string
   area: string
+  contact: string
   city: string
   landMark: string
   type: string
@@ -188,17 +190,16 @@ export default function JobPostForm({
             name="city"
             control={control}
             render={({ field }) => (
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium mb-1">City</label>
                 <select
                   {...field}
                   value={field.value || ""}
                   onChange={(e) => {
                     field.onChange(e.target.value)
-                    setValue("area", "") // correct use of setValue
+                    setValue("area", "")
                   }}
-                  className="w-full border rounded-lg px-3 py-[10px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-          dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                  className="w-full appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
                   <option value="">Select a city</option>
                   {location.map((loc: any) => (
@@ -207,6 +208,7 @@ export default function JobPostForm({
                     </option>
                   ))}
                 </select>
+                <ChevronDown className="absolute right-5 top-[70%] -translate-y-1/2 w-6 h-6 text-gray-600 pointer-events-none" />
                 {errors.city?.message && (
                   <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
                 )}
@@ -214,24 +216,22 @@ export default function JobPostForm({
             )}
           />
 
+
           <Controller
             name="area"
             control={control}
             render={({ field }) => {
               const selectedCity = watch("city")
-              const selectedLocation = location.find(
-                (loc: any) => loc.cityName === selectedCity
-              )
+              const selectedLocation = location.find((loc: any) => loc.cityName === selectedCity)
 
               return (
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium mb-1">Area</label>
                   <select
                     {...field}
                     value={field.value || ""}
                     disabled={!selectedLocation}
-                    className="w-full border rounded-lg px-3 py-[10px] focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-            dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    className="w-full appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   >
                     <option value="">Select an area</option>
                     {selectedLocation?.areas.map((area: any) => (
@@ -240,6 +240,7 @@ export default function JobPostForm({
                       </option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-5 top-[70%] -translate-y-1/2 w-6 h-6 text-gray-600 pointer-events-none" />
                   {errors.area?.message && (
                     <p className="text-red-500 text-sm mt-1">{errors.area.message}</p>
                   )}
@@ -248,7 +249,19 @@ export default function JobPostForm({
             }}
           />
 
-
+          <Controller
+            name="contact"
+            control={control}
+            render={({ field }) => (
+              <Input
+                label="Contact us (optional)"
+                type="number"
+                placeholder="Contact us"
+                {...field}
+                error={errors.contact?.message}
+              />
+            )}
+          />
 
           <Controller
             name="landMark"

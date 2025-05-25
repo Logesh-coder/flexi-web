@@ -144,6 +144,9 @@ export const jobPostSchema = yup.object().shape({
         ),
 
 
+    contact: yup
+        .string(),
+
     date: yup
         .string()
         .required('Date is required')
