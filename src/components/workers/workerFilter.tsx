@@ -94,7 +94,6 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
                 </div>
 
-
                 {/* Budget Range */}
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -117,7 +116,7 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
 
             {/* Clear Filter */}
             <button
-                className="my-2 mt-4 text-end w-full capitalize text-sm text-red-600 hover:underline"
+                className="my-2 mt-4 text-end w-full capitalize text-sm hover:underline"
                 onClick={clearFilters}
             >
                 clear filter
