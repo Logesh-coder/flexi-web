@@ -7,10 +7,12 @@ import { loginValidator } from '@/validators/auth.validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
 import { Lock, Mail } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import googleImg from '../../../../public/icons/google.png';
 
 export default function LoginPage() {
   const {
@@ -118,6 +120,20 @@ export default function LoginPage() {
             Sign in
           </Button>
         )}
+
+        <div className="mt-6">
+          <button
+            type="button"
+            className="w-full flex justify-center items-center gap-2 shadow p-2 border border-border rounded-md  "
+            onClick={() => {
+              window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
+            }}
+          >
+            <Image src={googleImg} alt="Google" className="w-5 h-5" />
+            Sign in with Google
+          </button>
+        </div>
+
       </form>
 
       <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
