@@ -8,7 +8,7 @@ interface JobPreviewProps {
 export function JobPreview({ jobData }: JobPreviewProps) {
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+    <div className="bg-white max-md:hidden dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Job Preview</h2>
 
       <JobCard job={jobData} />

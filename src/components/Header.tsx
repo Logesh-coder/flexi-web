@@ -1,20 +1,21 @@
 'use client';
-import { Menu, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from 'react';
 import { ThemeSwitch } from './theme-switch';
 
 export function Header() {
-  const [isLogged, setIsLogged] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const pathname = usePathname();
 
+  console.log('pathname', pathname)
 
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
-    setIsLogged(token);
-    console.log("isLogged", token);
+    setIsLoggedIn(!!token && token !== "null" && token !== "");
   }, [pathname]);
+
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors">
@@ -50,20 +51,17 @@ export function Header() {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center ">
             <ThemeSwitch />
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full md:hidden transition-colors">
-              <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            </button>
 
-            {isLogged ? (
+            {isLoggedIn ? (
               <div className='flex' >
                 <Link
                   href="/account/settings"
-                  className=" md:flex items-center mx-4 text-primary-700 hover:underline rounded-lg"
+                  className=" flex items-center  mr-4 ml-2 text-primary-700 hover:underline rounded-lg"
                 >
-                  <User className="w-4 h-4" />
-                  <span>profile</span>
+                  <User className="w-4 h-4 mr-2" />
+                  <span>Profile</span>
                 </Link>
                 <Link
                   href="/jobs/post"
@@ -73,13 +71,18 @@ export function Header() {
                 </Link>
               </div>
             ) : (
-              <div
-                className="hidden md:flex items-center gap-3 text-sm text-black dark:text-white rounded-lg transition-colors"
-              >
-                <Link href="/register">Sign up</Link>
-                <span>/</span>
-                <Link href="/login">Sign In</Link>
-              </div>
+
+              <>
+                {pathname !== '/login' && (
+                  <Link
+                    href="/login"
+                    className="text-sm ml-2 border-primary-500 border text-primary-500 px-4 py-[8px] rounded-lg"
+                  >
+                    Sign In
+                  </Link>
+                )}
+              </>
+
             )}
           </div>
         </div>

@@ -64,6 +64,14 @@ export default function LoginPage() {
     }
   }
 
+  useEffect(() => {
+    const token = localStorage.getItem('TOKEN');
+    if (token) {
+      router.push('/');
+    }
+  }, []);
+
+
   return (
     <AuthLayout title="Welcome back" subtitle="Sign in to your account">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -126,7 +134,7 @@ export default function LoginPage() {
             type="button"
             className="w-full flex justify-center items-center gap-2 shadow p-2 border border-border rounded-md  "
             onClick={() => {
-              window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/google`;
+              window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/user/google`;
             }}
           >
             <Image src={googleImg} alt="Google" className="w-5 h-5" />

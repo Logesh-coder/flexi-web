@@ -149,7 +149,7 @@ export function JobCard({ job, type }: JobCardProps) {
 
         <div className="text-end">
           <Link
-            href={`tel:${userMobileNumber}`}
+            href={` ${isPostingPage ? "" : `tel:${userMobileNumber}`}`}
             className="text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500"
           >
             Call Now
