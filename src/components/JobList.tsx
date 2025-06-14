@@ -7,7 +7,6 @@ import { JobCard } from './jobs/JobCard';
 import { JobCardSkeleton } from './jobs/JobCardSkeleton';
 
 export function JobList() {
-
   const { jobs, loading, setLimit } = useJobFilters();
 
   useEffect(() => {
@@ -15,7 +14,7 @@ export function JobList() {
   }, [])
 
   return (
-    <section className="py-16 bg-white dark:bg-gray-950 transition-colors">
+    <section className="pb-16 pt-10 bg-white dark:bg-gray-950 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">

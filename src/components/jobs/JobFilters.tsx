@@ -161,7 +161,7 @@ export function JobFilters({ filters, updateFilter, search, setSearch }: JobFilt
 
       {/* Clear Filter */}
       <button
-        className="my-2 mt-4 text-end w-full capitalize text-sm text-red-600 hover:underline"
+        className="my-2 mt-4 text-end w-full capitalize text-sm hover:underline"
         onClick={clearFilters}
       >
         clear filter
