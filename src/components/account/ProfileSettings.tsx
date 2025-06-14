@@ -32,8 +32,6 @@ export function ProfileSettings() {
 
   const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
 
-  console.log('profile', profile)
-
   const handleSaveChanges = async () => {
     const errors: { salary?: string; mobile?: string } = {};
 
@@ -103,7 +101,7 @@ export function ProfileSettings() {
         </div>
       )}
 
-      <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
+      <h2 className="sm:text-xl text-base font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

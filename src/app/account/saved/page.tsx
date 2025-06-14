@@ -60,8 +60,7 @@ export default function SavedItemsPage() {
   };
 
   return (
-    <div>
-      {/* Tabs */}
+    <div className=' max-sm:m-4 ' >
       <div className="flex space-x-4 mb-8">
         <button
           className={`py-2 px-6 rounded-full text-sm font-semibold ${tab === 'job' ? 'bg-primary-600 text-white' : 'bg-gray-200 text-gray-800'

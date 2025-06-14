@@ -9,8 +9,6 @@ export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const pathname = usePathname();
 
-  console.log('pathname', pathname)
-
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
     setIsLoggedIn(!!token && token !== "null" && token !== "");
@@ -24,7 +22,7 @@ export function Header() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-2xl font-bold text-primary-700 dark:text-primary-400"
+              className="text-[25px] font-bold text-primary-700 dark:text-primary-400"
             >
               Flxei
             </Link>
@@ -33,19 +31,19 @@ export function Header() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/jobs"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/jobs' && 'text-primary-500 dark:text-primary-500 '} `}
+              className={`text-gray-700 text-[17px] dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/jobs' && 'text-primary-600 dark:text-primary-600 '} `}
             >
               Find Jobs
             </Link>
             <Link
               href="/workers"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/workers' && 'text-primary-500 dark:text-primary-500'} `}
+              className={`text-gray-700 text-[17px] dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/workers' && 'text-primary-600 dark:text-primary-600'} `}
             >
               Find Workers
             </Link>
             <Link
               href="/help-an-support"
-              className={`text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/help-an-support' && 'text-primary-500 dark:text-primary-500'} `}
+              className={`text-gray-700 text-[17px] dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 ${pathname == '/help-an-support' && 'text-primary-600 dark:text-primary-600'} `}
             >
               Help & Support
             </Link>
@@ -65,13 +63,12 @@ export function Header() {
                 </Link>
                 <Link
                   href="/jobs/post"
-                  className="space-x-2 bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors"
+                  className="space-x-2 text-base bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   <span>Post Job</span>
                 </Link>
               </div>
             ) : (
-
               <>
                 {pathname !== '/login' && (
                   <Link
@@ -82,7 +79,6 @@ export function Header() {
                   </Link>
                 )}
               </>
-
             )}
           </div>
         </div>

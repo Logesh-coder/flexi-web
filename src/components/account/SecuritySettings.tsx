@@ -101,7 +101,7 @@ export function SecuritySettings() {
         />
 
         <div className="flex justify-end">
-          <Button type="submit">Update Password</Button>
+          <Button className='text-sm' type="submit">Update Password</Button>
         </div>
 
         {alertMessage && (

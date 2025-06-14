@@ -45,11 +45,11 @@ export default function PostedJobsPage() {
   }
 
   return (
-    <div>
+    <div className='max-sm:m-4' >
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">My Posted Jobs</h1>
+        <h1 className="sm:text-2xl text-xl font-bold text-gray-900 dark:text-white">My Posted Jobs</h1>
         <Link href="/jobs/post">
-          <Button>Post New Job</Button>
+          <Button className='max-sm:text-sm' >Post New Job</Button>
         </Link>
       </div>
 

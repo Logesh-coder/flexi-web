@@ -24,10 +24,10 @@ export function PostedJobCard({ job }: PostedJobCardProps) {
         </div>
         <div className="flex gap-2">
           <Link href={`/jobs/${job.slug}`}>
-            <Button variant="outline">View</Button>
+            <Button className='text-sm' variant="outline">View</Button>
           </Link>
           <Link href={`/jobs/edit/${job.slug}`}>
-            <Button variant="outline">Edit</Button>
+            <Button className='text-sm' variant="outline">Edit</Button>
           </Link>
         </div>
       </div>

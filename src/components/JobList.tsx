@@ -17,7 +17,7 @@ export function JobList() {
     <section className="pb-16 pt-10 bg-white dark:bg-gray-950 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             Latest Jobs
           </h2>
           <Link href='/jobs' className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
