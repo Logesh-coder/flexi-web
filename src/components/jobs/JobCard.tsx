@@ -1,12 +1,13 @@
 import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
 import axios from 'axios';
-import { CalendarDays, Clock, Heart, MapPin, Share2 } from 'lucide-react';
+import { CalendarDays, Clock, MapPin, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import ShareButtons from '../ui/ShareButtons';
+import WishlistButton from '../ui/WhishlistButton';
 
 interface JobCardProps {
   job: Job;
@@ -39,7 +40,6 @@ export function JobCard({ job, type }: JobCardProps) {
       if (axios.isAxiosError(error)) {
         const tokenError = error.response?.data?.message;
         if (tokenError === 'Authorization token is required') {
-          console.log('coming');
           toast.error('Please sign in to add items to your wishlist.');
         }
       } else {
@@ -50,7 +50,6 @@ export function JobCard({ job, type }: JobCardProps) {
 
   const userMobileNumber = job?.contact || job?.createUser?.mobile;
 
-  console.log('userMobileNumber', userMobileNumber)
 
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
@@ -69,15 +68,11 @@ export function JobCard({ job, type }: JobCardProps) {
 
             </h3>
             <div className="flex">
-              <span
-                onClick={() => !isPostingPage && toggleWishlist()}
-                className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isSaved ? 'text-red-500' : 'text-gray-400'
-                  } ${isPostingPage ? 'pointer-events-none opacity-50' : ''}`}
-              >
-                <Heart
-                  className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'} transition-all duration-300`}
-                />
-              </span>
+              <WishlistButton
+                isSaved={isSaved}
+                isPostingPage={isPostingPage}
+                toggleWishlist={toggleWishlist}
+              />
 
               {isPostingPage ? <Share2
                 className="w-6 h-6 cursor-pointer ml-4 text-gray-400 hover:text-primary-400"

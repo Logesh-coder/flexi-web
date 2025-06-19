@@ -4,12 +4,11 @@ import SettingsPage from "./settings/page";
 export default function Page() {
     return (
         <>
-            <div className=" md:block">
+            <div className=" max-md:hidden">
                 <SettingsPage />
             </div>
 
-            {/* Mobile only */}
-            <div className="block md: ">
+            <div className="block">
                 <h3 className=" font-semibold text-xl p-4 " >Profile</h3>
                 <AccountNav />
             </div>

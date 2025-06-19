@@ -18,7 +18,6 @@ export default function PostJobPage() {
     try {
       const res = await jobService(data);
       if (res?.status === 201) {
-        console.log('Job posted successfully:', res.data);
         router.push('/jobs')
       }
     } catch (error) {

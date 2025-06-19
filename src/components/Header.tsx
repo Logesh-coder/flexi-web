@@ -1,19 +1,27 @@
 'use client';
 import { User } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from 'react';
 import { ThemeSwitch } from './theme-switch';
 
 export function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const pathname = usePathname();
+  const router = useRouter()
 
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
     setIsLoggedIn(!!token && token !== "null" && token !== "");
   }, [pathname]);
 
+  const profile = () => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      router.push('/account/settings');
+    } else {
+      router.push('/account');
+    }
+  };
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors">
@@ -54,13 +62,13 @@ export function Header() {
 
             {isLoggedIn ? (
               <div className='flex' >
-                <Link
-                  href="/account/settings"
-                  className=" flex items-center  mr-4 ml-2 text-primary-700 hover:underline rounded-lg"
+                <div
+                  onClick={profile}
+                  className=" flex items-center cursor-pointer mr-4 ml-2 text-primary-700 hover:underline rounded-lg"
                 >
                   <User className="w-4 h-4 mr-2" />
                   <span>Profile</span>
-                </Link>
+                </div>
                 <Link
                   href="/jobs/post"
                   className="space-x-2 text-base bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 text-white px-4 py-2 rounded-lg transition-colors"

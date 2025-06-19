@@ -9,7 +9,7 @@ import { AxiosError } from 'axios';
 import { Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import googleImg from '../../../../public/icons/google.png';
@@ -27,6 +27,7 @@ export default function LoginPage() {
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
 
   const watchPass = watch('password');
   const watchMail = watch('email');
@@ -54,7 +55,6 @@ export default function LoginPage() {
           router.push('/account/settings')
         }
       }
-
     } catch (error) {
       const axiosError = error as AxiosError<{ message: string }>;
       const errorMSG = axiosError.response?.data?.message || "An unexpected error occurred";
@@ -71,6 +71,19 @@ export default function LoginPage() {
     }
   }, []);
 
+  useEffect(() => {
+    const token = searchParams.get('token');
+    const isActive = searchParams.get('isActive');
+
+    if (token) {
+      localStorage.setItem('TOKEN', token)
+      if (isActive) {
+        router.push('/')
+      } else {
+        router.push('/account/settings')
+      }
+    }
+  }, [searchParams]);
 
   return (
     <AuthLayout title="Welcome back" subtitle="Sign in to your account">
@@ -129,12 +142,12 @@ export default function LoginPage() {
           </Button>
         )}
 
-        <div className="mt-6">
+        <div className="mt-4">
           <button
             type="button"
             className="w-full flex justify-center items-center gap-2 shadow p-2 border border-border rounded-md  "
             onClick={() => {
-              window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/user/google`;
+              window.location.href = `http://localhost:8000/auth/google/start`;
             }}
           >
             <Image src={googleImg} alt="Google" className="w-5 h-5" />

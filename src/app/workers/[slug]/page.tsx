@@ -12,10 +12,7 @@ export default function JobDetailPage() {
 
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
-
-  console.log('data', data)
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -23,8 +20,6 @@ export default function JobDetailPage() {
         setLoading(true);
         const response = await getSingleWorkerService(slug as string);
         setData(response.data?.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load job');
       } finally {
         setLoading(false);
       }
