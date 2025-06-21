@@ -2,9 +2,10 @@
 
 import { Button } from '@/components/ui/Button';
 import ShareButtons from '@/components/ui/ShareButtons';
+import WishlistButton from '@/components/ui/WhishlistButton';
 import getSingleJobService from '@/services/get-single-job-service';
 import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
-import { CalendarDays, Clock, Heart, MapPin, Star, User } from 'lucide-react';
+import { CalendarDays, Clock, MapPin, Star, User } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -73,16 +74,11 @@ export default function JobDetailPage() {
               </h1>
 
               <div className="flex">
-                <span
-                  onClick={toggleWishlist}
-                  className={`cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-110 ${isSaved ? 'text-red-500' : 'text-gray-400'
-                    }`}
-                >
-                  <Heart
-                    className={`w-6 h-6 ${isSaved ? 'fill-red-500' : 'fill-transparent'
-                      } transition-all duration-300`}
-                  />
-                </span>
+                <WishlistButton
+                  isSaved={isSaved}
+                  // isPostingPage={isPostingPage}
+                  toggleWishlist={toggleWishlist}
+                />
                 <ShareButtons url={jobUrl} title="Apply for this amazing job!" />
               </div>
             </div>

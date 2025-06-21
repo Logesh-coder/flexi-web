@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 interface WishlistButtonProps {
     isSaved: boolean | string;
-    isPostingPage: boolean;
+    isPostingPage?: boolean;
     toggleWishlist: () => void;
 }
 

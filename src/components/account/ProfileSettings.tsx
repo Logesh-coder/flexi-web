@@ -1,7 +1,7 @@
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
-import { Calendar as CalendarIcon, IndianRupee, Link as LinkIcon, Mail, Phone, User } from 'lucide-react';
+import { Calendar as CalendarIcon, IndianRupee, Mail, Phone, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import { CityAreaSelector } from '../CityAreaSelector';
@@ -177,7 +177,9 @@ export function ProfileSettings() {
             </div>
           </div>
 
-          <div>
+          <CityAreaSelector profile={profile} setProfile={setProfile} />
+
+          <div className='w-full' >
             <Input
               icon={IndianRupee}
               label="Your Daily Salary"
@@ -191,15 +193,6 @@ export function ProfileSettings() {
             )}
           </div>
 
-          <Input
-            icon={LinkIcon}
-            label="Instagram Profile Link"
-            type="url"
-            value={profile.instaProfileLink || ''}
-            onChange={(e) => setProfile({ ...profile, instaProfileLink: e.target.value })}
-          />
-
-          <CityAreaSelector profile={profile} setProfile={setProfile} />
         </div>
 
         <Textarea

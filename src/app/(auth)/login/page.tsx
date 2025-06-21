@@ -65,22 +65,22 @@ export default function LoginPage() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('TOKEN');
-    if (token) {
-      router.push('/');
-    }
-  }, []);
-
-  useEffect(() => {
     const token = searchParams.get('token');
     const isActive = searchParams.get('isActive');
 
+    console.log('isActive', isActive)
+
     if (token) {
       localStorage.setItem('TOKEN', token)
-      if (isActive) {
+      if (isActive == 'true') {
         router.push('/')
       } else {
         router.push('/account/settings')
+      }
+    } else {
+      const localToken = localStorage.getItem('TOKEN');
+      if (localToken) {
+        router.push('/');
       }
     }
   }, [searchParams]);
