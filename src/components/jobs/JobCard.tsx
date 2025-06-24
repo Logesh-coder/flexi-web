@@ -1,11 +1,14 @@
+import addCall from '@/services/add-call';
 import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
 import axios from 'axios';
+import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarDays, Clock, MapPin, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { Button } from '../ui/Button';
 import ShareButtons from '../ui/ShareButtons';
 import WishlistButton from '../ui/WhishlistButton';
 
@@ -17,6 +20,7 @@ interface JobCardProps {
 export function JobCard({ job, type }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
   const path = usePathname();
+  const [showCallWarning, setShowCallWarning] = useState(false);
 
   const isPostingPage = path === '/jobs/post';
 
@@ -50,7 +54,23 @@ export function JobCard({ job, type }: JobCardProps) {
 
   const userMobileNumber = job?.contact || job?.createUser?.mobile;
 
+  const handleCall = async () => {
+    const token = localStorage.getItem('TOKEN');
 
+    if (token) {
+      try {
+        await addCall({
+          [type!]: job?._id,
+        });
+
+        window.location.href = `tel:${userMobileNumber}`;
+      } catch (err) {
+        console.error('Failed to track call', err);
+      }
+    } else {
+      setShowCallWarning(true); // Show modal instead of window.confirm
+    }
+  };
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
       <div className="flex flex-col h-full">
@@ -143,14 +163,58 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         <div className="text-end">
-          <Link
-            href={` ${isPostingPage ? "" : `tel:${userMobileNumber}`}`}
+          <Button
+            onClick={handleCall}
             className="text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500"
           >
             Call Now
-          </Link>
+          </Button>
+
         </div>
       </div>
+
+      <AnimatePresence>
+        {showCallWarning && (
+          <motion.div
+            className="fixed inset-0 mx-4 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl"
+              initial={{ scale: 0.9, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 50 }}
+              transition={{ duration: 0.25 }}
+            >
+              <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
+                Not Logged In
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                You are not currently logged in. This call will not be saved in your call history.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCallWarning(false)}
+                  className="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCallWarning(false);
+                    window.location.href = `tel:${userMobileNumber}`;
+                  }}
+                  className="px-4 py-2 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700"
+                >
+                  Call Anyway
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div >
   );
 }

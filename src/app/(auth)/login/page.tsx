@@ -75,6 +75,7 @@ export default function LoginPage() {
       if (isActive == 'true') {
         router.push('/')
       } else {
+        console.log('loki')
         router.push('/account/settings')
       }
     } else {

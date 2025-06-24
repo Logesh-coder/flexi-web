@@ -76,6 +76,7 @@ export function ProfileSettings() {
     const fetchProfile = async () => {
       try {
         const response = await myProfile();
+        console.log('res', response)
         setProfile(response?.data?.data);
         setOriginalProfile(response?.data?.data)
       } catch (err: any) {
@@ -86,9 +87,19 @@ export function ProfileSettings() {
     fetchProfile();
   }, [alertMessage]);
 
+  console.log('profile', profile)
+
+  const missingFields: string[] = [];
+
+  if (!profile?.mobile) missingFields.push('mobile');
+  if (!profile?.date_of_birth) missingFields.push('Date of Birth');
+  if (!profile?.city) missingFields.push('city');
+  if (!profile?.area) missingFields.push('area');
+  if (!profile?.domain) missingFields.push('work domains');
+
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-
       {profile.isActive == false && (
         <div id="alert-2" className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
           <svg className="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -96,7 +107,9 @@ export function ProfileSettings() {
           </svg>
           <span className="sr-only">Info</span>
           <div className="ms-3 text-sm font-medium">
-            Your account is not active. Please enter your city, area, and work domains to activate it.
+            {missingFields.length > 0
+              ? `Your account is not active. Please enter your ${missingFields.join(', ')} to activate it.`
+              : 'Your account is active.'}
           </div>
         </div>
       )}
@@ -163,7 +176,7 @@ export function ProfileSettings() {
                         const year = date.getFullYear();
                         const month = String(date.getMonth() + 1).padStart(2, '0');
                         const day = String(date.getDate()).padStart(2, '0');
-                        const formattedDate = `${year}-${month}-${day}`; // e.g., 2024-04-12
+                        const formattedDate = `${year}-${month}-${day}`;
                         setProfile({ ...profile, date_of_birth: formattedDate });
                         setShowCalendar(false);
                       }

@@ -58,6 +58,8 @@ export default function JobDetailPage() {
     }
   };
 
+  console.log('data', data)
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -159,7 +161,7 @@ export default function JobDetailPage() {
                   {loading ? (
                     <div className="h-5 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                   ) : (
-                    data.createUserId.name
+                    data?.createUserId?.name
                   )}
                 </h3>
                 <div className="flex items-center gap-2 mt-2">
@@ -174,7 +176,7 @@ export default function JobDetailPage() {
           {loading ? (
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
           ) : (
-            <Link href={`tel:${data.createUserId.mobile}`}>
+            <Link href={`tel:${data?.createUserId?.mobile}`}>
               <Button className="w-full">Call Now</Button>
             </Link>
           )}

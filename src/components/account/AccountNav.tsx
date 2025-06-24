@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion } from 'framer-motion';
-import { Briefcase, Heart, Settings, UserX } from 'lucide-react';
+import { Briefcase, Heart, Phone, Settings, UserX } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ const navItems = [
   { href: '/account/settings', label: 'Settings', icon: Settings },
   { href: '/account/saved', label: 'Wishlist', icon: Heart },
   { href: '/account/jobs', label: 'Posted Jobs', icon: Briefcase },
+  { href: '/account/call_history', label: 'Call History', icon: Phone },
 ];
 
 export function AccountNav() {

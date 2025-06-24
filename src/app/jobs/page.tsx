@@ -60,6 +60,7 @@ export default function JobsPage() {
             setSearchValue={setSearchValue}
             loadMore={loadMore}
             hasMore={hasMore}
+            type='job'
           />
         </div>
       </div>

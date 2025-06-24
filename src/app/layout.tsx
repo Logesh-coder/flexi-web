@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header'
+import TanStackQueryProvider from '@/providers/tanstack-query-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -9,8 +10,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'FreeLancer - Find the Perfect Freelance Services',
-  description: 'Connect with talented freelancers and get your projects done',
+  title: 'Find The Flexible Jobs and workers',
+  description: 'Make money make every day.',
 }
 
 export default function RootLayout({
@@ -30,12 +31,14 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <Toaster />
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
-            <Header />
-            {children}
-          </div>
-        </ThemeProvider>
+        <TanStackQueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
+              <Header />
+              {children}
+            </div>
+          </ThemeProvider>
+        </TanStackQueryProvider>
       </body>
     </html>
   )
