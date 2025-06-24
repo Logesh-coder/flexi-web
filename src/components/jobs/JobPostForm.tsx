@@ -37,6 +37,18 @@ export type JobFormInput = {
   durationEndTime: string
 }
 
+type Area = {
+  id: string;
+  name: string;
+};
+
+type LocationType = {
+  cityId: string;
+  cityName: string;
+  areas: Area[];
+};
+
+
 export default function JobPostForm({
   onSubmit,
   loading,
@@ -44,7 +56,7 @@ export default function JobPostForm({
   initialValues,
   isEdit = false,
 }: JobPostFormProps) {
-  const [location, setLocation] = useState([]);
+  const [location, setLocation] = useState<LocationType[]>([]);
 
   const {
     handleSubmit,
@@ -216,7 +228,6 @@ export default function JobPostForm({
             )}
           />
 
-
           <Controller
             name="area"
             control={control}
@@ -234,7 +245,7 @@ export default function JobPostForm({
                     className="w-full appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   >
                     <option value="">Select an area</option>
-                    {selectedLocation?.areas.map((area: any) => (
+                    {selectedLocation?.areas.map((area) => (
                       <option key={area.id} value={area.name} className="capitalize">
                         {area.name}
                       </option>

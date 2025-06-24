@@ -23,7 +23,7 @@ export function CityAreaSelector({
                 setLocationData(data);
 
                 if (profile.city) {
-                    const selectedCity = data.find((city) => city.cityName === profile.city);
+                    const selectedCity = data.find((city: { cityName: string; areas: string[] }) => city.cityName === profile.city);
                     setAreas(selectedCity?.areas || []);
                 }
             } catch (error) {

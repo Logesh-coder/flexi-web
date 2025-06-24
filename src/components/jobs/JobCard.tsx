@@ -1,4 +1,4 @@
-import addCall from '@/services/add-call';
+import { addCall } from '@/services/add-call';
 import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { Job } from '@/types/jobs';
 import axios from 'axios';
