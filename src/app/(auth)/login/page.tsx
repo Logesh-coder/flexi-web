@@ -10,13 +10,12 @@ import { Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import googleImg from '../../../../public/icons/google.png';
 
-export default function LoginPage() {
+function LoginPageComponent() {
   const {
-    register,
     watch,
     control,
     handleSubmit,
@@ -169,4 +168,13 @@ export default function LoginPage() {
       </p>
     </AuthLayout>
   );
+}
+
+
+export default function Page() {
+  return (
+    <Suspense fallback="Loading...">
+      <LoginPageComponent />
+    </Suspense>
+  )
 }
