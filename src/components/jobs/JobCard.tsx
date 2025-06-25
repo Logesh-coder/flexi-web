@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
 import ShareButtons from '../ui/ShareButtons';
 import WishlistButton from '../ui/WhishlistButton';
-
 interface JobCardProps {
   job: Job;
   type?: string;
@@ -52,8 +51,6 @@ export function JobCard({ job, type }: JobCardProps) {
     }
   };
 
-  const userMobileNumber = job?.contact || job?.createUser?.mobile;
-
   const handleCall = async () => {
     const token = localStorage.getItem('TOKEN');
 
@@ -63,7 +60,7 @@ export function JobCard({ job, type }: JobCardProps) {
           [type!]: job?._id,
         });
 
-        window.location.href = `tel:${userMobileNumber}`;
+        window.location.href = `tel:${job?.createUser?.mobile}`;
       } catch (err) {
         console.error('Failed to track call', err);
       }
@@ -176,7 +173,7 @@ export function JobCard({ job, type }: JobCardProps) {
       <AnimatePresence>
         {showCallWarning && (
           <motion.div
-            className="fixed inset-0 mx-4 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -201,15 +198,15 @@ export function JobCard({ job, type }: JobCardProps) {
                 >
                   Cancel
                 </button>
-                <button
+                <Link
+                  href={`tel:${job?.createUser?.mobile}`}
                   onClick={() => {
                     setShowCallWarning(false);
-                    window.location.href = `tel:${userMobileNumber}`;
                   }}
                   className="px-4 py-2 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700"
                 >
                   Call Anyway
-                </button>
+                </Link>
               </div>
             </motion.div>
           </motion.div>

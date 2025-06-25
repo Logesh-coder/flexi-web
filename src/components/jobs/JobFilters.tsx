@@ -10,9 +10,10 @@ interface JobFilterProps {
   updateFilter: any;
   search: boolean;
   setSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  setMobileFilterOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function JobFilters({ filters, updateFilter, search, setSearch }: JobFilterProps) {
+export function JobFilters({ filters, updateFilter, search, setSearch, setMobileFilterOpen }: JobFilterProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [locations, setLocations] = useState([]);
   const [selectedCity, setSelectedCity] = useState<any>(null);
@@ -46,6 +47,16 @@ export function JobFilters({ filters, updateFilter, search, setSearch }: JobFilt
     setSelectedCity(null);
     setSearch(!search);
   };
+
+  const handleSearch = () => {
+    setSearch(!search);
+    if (setMobileFilterOpen) {
+      setMobileFilterOpen(false)
+    }
+  }
+
+  const isFilterApplied = Object.values(filters).some((value) => value !== '');
+
 
   return (
     <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -170,11 +181,17 @@ export function JobFilters({ filters, updateFilter, search, setSearch }: JobFilt
       {/* Search Button */}
       <div>
         <button
-          onClick={() => setSearch(!search)}
-          className="w-full py-2 px-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          onClick={() => handleSearch()}
+          disabled={!isFilterApplied}
+          className={`w-full py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500
+          ${isFilterApplied
+              ? 'bg-primary-500 text-white hover:bg-primary-600'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'}
+          `}
         >
           Search
         </button>
+
       </div>
     </div>
   );

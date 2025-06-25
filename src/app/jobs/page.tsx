@@ -28,6 +28,9 @@ export default function JobsPage() {
     };
   }, [mobileFilterOpen]);
 
+  const isFilterApplied = Object.values(filters).some((value) => value !== '');
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Find Jobs</h1>
@@ -35,11 +38,15 @@ export default function JobsPage() {
       <div className="md:hidden flex justify-end mb-4">
         <button
           onClick={() => setMobileFilterOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 border rounded-lg text-sm text-gray-700 dark:text-white border-gray-300 dark:border-gray-600"
+          className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm 
+          ${isFilterApplied
+              ? 'bg-primary-500 text-white border-primary-500 hover:bg-primary-600'
+              : 'text-gray-700 dark:text-white border-gray-300 dark:border-gray-600'}`}
         >
           <SlidersHorizontal className="w-4 h-4" />
           Filter
         </button>
+
       </div>
 
       <div className="flex relative gap-8 min-h-screen">
@@ -79,6 +86,7 @@ export default function JobsPage() {
               updateFilter={updateFilter}
               search={search}
               setSearch={setSearch}
+              setMobileFilterOpen={setMobileFilterOpen}
             />
           </div>
         </div>
