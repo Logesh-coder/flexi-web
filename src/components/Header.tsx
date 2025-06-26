@@ -32,7 +32,7 @@ export function Header() {
               href="/"
               className="text-[25px] font-bold text-primary-700 dark:text-primary-400"
             >
-              Flxei
+              Flexi
             </Link>
           </div>
 

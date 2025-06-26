@@ -25,6 +25,7 @@ export interface Job {
   domain?: string
   createUser?: JobUser
   contact?: string
+  mobile?: string
 }
 
 export interface JobFilters {

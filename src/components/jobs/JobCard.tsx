@@ -21,7 +21,10 @@ export function JobCard({ job, type }: JobCardProps) {
   const path = usePathname();
   const [showCallWarning, setShowCallWarning] = useState(false);
 
+  console.log('showCallWarning', showCallWarning)
+
   const isPostingPage = path === '/jobs/post';
+  const userMobileNumber = job?.mobile || job?.createUser?.mobile;
 
   const toggleWishlist = async () => {
     try {
@@ -60,7 +63,7 @@ export function JobCard({ job, type }: JobCardProps) {
           [type!]: job?._id,
         });
 
-        window.location.href = `tel:${job?.createUser?.mobile}`;
+        window.location.href = `tel:${userMobileNumber}`;
       } catch (err) {
         console.error('Failed to track call', err);
       }
@@ -68,6 +71,7 @@ export function JobCard({ job, type }: JobCardProps) {
       setShowCallWarning(true); // Show modal instead of window.confirm
     }
   };
+
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
       <div className="flex flex-col h-full">
@@ -198,15 +202,18 @@ export function JobCard({ job, type }: JobCardProps) {
                 >
                   Cancel
                 </button>
-                <Link
-                  href={`tel:${job?.createUser?.mobile}`}
+                <button
                   onClick={() => {
                     setShowCallWarning(false);
+                    setTimeout(() => {
+                      window.location.href = `tel:${userMobileNumber}`;
+                    }, 100); // Delay helps avoid modal closing transition conflict
                   }}
                   className="px-4 py-2 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700"
                 >
                   Call Anyway
-                </Link>
+                </button>
+
               </div>
             </motion.div>
           </motion.div>
