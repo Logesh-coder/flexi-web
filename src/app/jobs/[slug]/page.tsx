@@ -58,23 +58,23 @@ export default function JobDetailPage() {
     }
   };
 
-  const handleCall = async () => {
-    const token = localStorage.getItem('TOKEN');
+  // const handleCall = async () => {
+  //   const token = localStorage.getItem('TOKEN');
 
-    if (token) {
-      try {
-        await addCall({
-          [type!]: job?._id,
-        });
+  //   if (token) {
+  //     try {
+  //       await addCall({
+  //         [type!]: job?._id,
+  //       });
 
-        window.location.href = `tel:${job?.createUser?.mobile}`;
-      } catch (err) {
-        console.error('Failed to track call', err);
-      }
-    } else {
-      setShowCallWarning(true); // Show modal instead of window.confirm
-    }
-  };
+  //       window.location.href = `tel:${job?.createUser?.mobile}`;
+  //     } catch (err) {
+  //       console.error('Failed to track call', err);
+  //     }
+  //   } else {
+  //     setShowCallWarning(true); // Show modal instead of window.confirm
+  //   }
+  // };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
