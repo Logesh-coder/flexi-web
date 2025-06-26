@@ -147,7 +147,7 @@ function LoginPageComponent() {
             type="button"
             className="w-full flex justify-center items-center gap-2 shadow p-2 border border-border rounded-md  "
             onClick={() => {
-              window.location.href = `http://localhost:8000/auth/google/start`;
+              window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google/start`;
             }}
           >
             <Image src={googleImg} alt="Google" className="w-5 h-5" />
