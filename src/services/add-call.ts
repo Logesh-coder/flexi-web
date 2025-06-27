@@ -5,15 +5,15 @@ const addCall = (data: any) => {
     return res;
 };
 
-const getJobCall = () => {
-    const res = AxiosInstance.get('/user/called-jobs');
-    return res;
-};
+const getJobCall = (page = 1, limit = 10) =>
+    AxiosInstance.get('/user/called-jobs', {
+        params: { page, limit }
+    });
 
-const getWorkersCall = () => {
-    const res = AxiosInstance.get('/user/called-workers');
-    return res;
-};
+const getWorkersCall = (page = 1, limit = 10) =>
+    AxiosInstance.get('/user/called-workers', {
+        params: { page, limit }
+    });
 
 export { addCall, getJobCall, getWorkersCall };
 

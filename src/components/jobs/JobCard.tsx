@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import { Button } from '../ui/Button';
 import ShareButtons from '../ui/ShareButtons';
 import WishlistButton from '../ui/WhishlistButton';
+
 interface JobCardProps {
   job: Job;
   type?: string;
@@ -20,8 +21,6 @@ export function JobCard({ job, type }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
   const path = usePathname();
   const [showCallWarning, setShowCallWarning] = useState(false);
-
-  console.log('showCallWarning', showCallWarning)
 
   const isPostingPage = path === '/jobs/post';
   const userMobileNumber = job?.mobile || job?.createUser?.mobile;
@@ -71,6 +70,8 @@ export function JobCard({ job, type }: JobCardProps) {
       setShowCallWarning(true); // Show modal instead of window.confirm
     }
   };
+
+  console.log('job', job)
 
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">

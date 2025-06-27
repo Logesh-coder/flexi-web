@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 
 export default function JobsPage() {
   const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore, setLimit } = useJobFilters();
-
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
   useEffect(() => {
@@ -29,7 +28,6 @@ export default function JobsPage() {
   }, [mobileFilterOpen]);
 
   const isFilterApplied = Object.values(filters).some((value) => value !== '');
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">

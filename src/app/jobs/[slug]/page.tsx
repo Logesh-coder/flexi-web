@@ -3,48 +3,49 @@
 import { Button } from '@/components/ui/Button';
 import ShareButtons from '@/components/ui/ShareButtons';
 import WishlistButton from '@/components/ui/WhishlistButton';
+import { addCall } from '@/services/add-call';
 import getSingleJobService from '@/services/get-single-job-service';
 import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
-import { CalendarDays, Clock, MapPin, Star, User } from 'lucide-react';
-import Link from 'next/link';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import { CalendarDays, Clock, MapPin, User } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function JobDetailPage() {
   const { slug } = useParams();
+  const queryClient = useQueryClient();
+  const jobUrl = usePathname();
 
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isSaved, setIsSaved] = useState<boolean>(data?.isSaved || false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [showCallWarning, setShowCallWarning] = useState(false);
 
-  const jobUrl = usePathname()
+  // Fetch job data
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ['job', slug],
+    queryFn: () => getSingleJobService(slug as string).then((res) => res.data.data),
+    enabled: !!slug,
+  });
 
+  // Update saved state when job data is fetched
   useEffect(() => {
     if (typeof data?.isSaved === 'boolean') {
       setIsSaved(data.isSaved);
     }
   }, [data?.isSaved]);
 
-  useEffect(() => {
-    const fetchJob = async () => {
-      try {
-        setLoading(true);
-        const response = await getSingleJobService(slug as string);
-        setData(response.data?.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load job');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Mutation: Track call
+  const callMutation = useMutation({
+    mutationFn: () => addCall({ job: data?._id }),
+    onSuccess: () => {
+      window.location.href = `tel:${data?.createUser?.mobile}`;
+    },
+    onError: (err) => {
+      console.error('Call failed', err);
+    },
+  });
 
-    if (slug) fetchJob();
-  }, [slug]);
-
-  if (error) return <p className="text-red-500">{error}</p>;
-
-
+  // Wishlist toggle
   const toggleWishlist = async () => {
     try {
       if (isSaved) {
@@ -58,23 +59,17 @@ export default function JobDetailPage() {
     }
   };
 
-  // const handleCall = async () => {
-  //   const token = localStorage.getItem('TOKEN');
+  // Handle call button click
+  const handleCall = () => {
+    const token = localStorage.getItem('TOKEN');
+    if (token) {
+      callMutation.mutate();
+    } else {
+      setShowCallWarning(true);
+    }
+  };
 
-  //   if (token) {
-  //     try {
-  //       await addCall({
-  //         [type!]: job?._id,
-  //       });
-
-  //       window.location.href = `tel:${job?.createUser?.mobile}`;
-  //     } catch (err) {
-  //       console.error('Failed to track call', err);
-  //     }
-  //   } else {
-  //     setShowCallWarning(true); // Show modal instead of window.confirm
-  //   }
-  // };
+  if (isError) return <p className="text-red-500">{(error as any)?.message || 'Something went wrong'}</p>;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -84,7 +79,7 @@ export default function JobDetailPage() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                {loading ? (
+                {isLoading ? (
                   <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
                 ) : (
                   <span className='capitalize'>{data.title}</span>
@@ -94,7 +89,6 @@ export default function JobDetailPage() {
               <div className="flex">
                 <WishlistButton
                   isSaved={isSaved}
-                  // isPostingPage={isPostingPage}
                   toggleWishlist={toggleWishlist}
                 />
                 <ShareButtons url={jobUrl} title="Apply for this amazing job!" />
@@ -104,7 +98,7 @@ export default function JobDetailPage() {
             <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
               <div className="flex items-center gap-1">
                 <CalendarDays className="w-5 h-5" />
-                {loading ? (
+                {isLoading ? (
                   <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                 ) : (
                   data.date
@@ -113,7 +107,7 @@ export default function JobDetailPage() {
 
               <div className="flex items-center gap-1">
                 <Clock className="w-5 h-5" />
-                {loading ? (
+                {isLoading ? (
                   <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                 ) : (
                   `${data.durationStartTime} to ${data.durationEndTime}`
@@ -122,7 +116,7 @@ export default function JobDetailPage() {
             </div>
 
             <h1 className="text-2xl text-primary-500 capitalize font-semibold mb-2">
-              {loading ? (
+              {isLoading ? (
                 <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
                 `₹ ${data.budget}`
@@ -131,21 +125,22 @@ export default function JobDetailPage() {
 
             <div className="flex items-center gap-1 mt-4">
               <MapPin className="w-5 h-5" />
-              {loading ? (
+              {isLoading ? (
                 <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
                 `${data.area}, ${data.city}`
               )}
             </div>
+
             <h4 className="text-[15px] ml-6 mt-2">
-              {loading ? (
+              {isLoading ? (
                 <div className="h-4 w-36 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
                 data.landMark
               )}
             </h4>
 
-            {loading ? (
+            {isLoading ? (
               <div className="mt-4 space-y-2">
                 <div className="h-5 bg-gray-200 dark:bg-gray-700 w-1/2 rounded animate-pulse"></div>
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 w-full rounded animate-pulse"></div>
@@ -166,7 +161,7 @@ export default function JobDetailPage() {
         <div className="space-y-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-4">
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-              About the Client
+              About the Owner
             </h2>
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
@@ -174,30 +169,84 @@ export default function JobDetailPage() {
               </div>
               <div>
                 <h3 className="font-medium capitalize text-gray-900 dark:text-white">
-                  {loading ? (
+                  {isLoading ? (
                     <div className="h-5 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                   ) : (
                     data?.createUserId?.name
                   )}
                 </h3>
                 <div className="flex items-center gap-2 mt-2">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span className="text-sm font-medium">4.9</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">(28 reviews)</span>
+                  <span className="text-sm font-medium">{data?.createUserId?.email}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
           ) : (
-            <Link href={`tel:${data?.createUserId?.mobile}`}>
-              <Button className="w-full">Call Now</Button>
-            </Link>
+            <Button
+              onClick={() => {
+                const token = localStorage.getItem('TOKEN');
+                if (token) {
+                  callMutation.mutate();
+                } else {
+                  setShowCallWarning(true);
+                }
+              }}
+              className="w-full"
+            >
+              {callMutation.isPending ? 'Calling...' : 'Call Now'}
+            </Button>
+
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {showCallWarning && (
+          <motion.div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl"
+              initial={{ scale: 0.9, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 50 }}
+              transition={{ duration: 0.25 }}
+            >
+              <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
+                Not Logged In
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                You are not currently logged in. This call will not be saved in your call history.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowCallWarning(false)}
+                  className="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCallWarning(false);
+                    setTimeout(() => {
+                      window.location.href = `tel:${data?.createUser?.mobile}`;
+                    }, 100);
+                  }}
+                  className="px-4 py-2 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700"
+                >
+                  Call Anyway
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

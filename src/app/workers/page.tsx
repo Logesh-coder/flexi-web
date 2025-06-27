@@ -1,5 +1,4 @@
 'use client'
-
 import { JobGrid } from '@/components/jobs/JobGrid';
 import { WorkersFilters } from '@/components/workers/workerFilter';
 import { useWorkerFilters } from '@/hooks/useWorkerFilter';
