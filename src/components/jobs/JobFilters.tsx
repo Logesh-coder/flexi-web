@@ -11,12 +11,15 @@ interface JobFilterProps {
   search: boolean;
   setSearch: React.Dispatch<React.SetStateAction<boolean>>;
   setMobileFilterOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  clearFilterListPage: boolean;
+  setClearFilterListPage: any
 }
 
-export function JobFilters({ filters, updateFilter, search, setSearch, setMobileFilterOpen }: JobFilterProps) {
+export function JobFilters({ filters, updateFilter, search, setSearch, setMobileFilterOpen, clearFilterListPage, setClearFilterListPage }: JobFilterProps) {
   const [showCalendar, setShowCalendar] = useState(false);
   const [locations, setLocations] = useState([]);
   const [selectedCity, setSelectedCity] = useState<any>(null);
+  const [localFilters, setLocalFilters] = useState(filters);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -30,8 +33,12 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
     fetchLocations();
   }, []);
 
+  useEffect(() => {
+    setLocalFilters(filters);
+  }, [filters]);
+
   const clearFilters = () => {
-    const emptyFilters: any = {
+    const emptyFilters = {
       search: '',
       city: '',
       area: '',
@@ -40,26 +47,43 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
       maxBudget: '',
     };
 
-    for (const key in emptyFilters) {
-      updateFilter(key as keyof any, '');
-    }
-
+    setLocalFilters(emptyFilters);
+    Object.keys(emptyFilters).forEach((key) => updateFilter(key, ''));
     setSelectedCity(null);
     setSearch(!search);
   };
 
+  useEffect(() => {
+    if (clearFilterListPage) {
+      const emptyFilters = {
+        search: '',
+        city: '',
+        area: '',
+        date: '',
+        minBudget: '',
+        maxBudget: '',
+      };
+
+      setLocalFilters(emptyFilters);
+      Object.keys(emptyFilters).forEach((key) => updateFilter(key, ''));
+      setSelectedCity(null);
+      setSearch(!search);
+      setClearFilterListPage(false)
+    }
+  }, [clearFilterListPage])
+
   const handleSearch = () => {
+    Object.entries(localFilters).forEach(([key, value]) => updateFilter(key, value));
     setSearch(!search);
     if (setMobileFilterOpen) {
-      setMobileFilterOpen(false)
+      setMobileFilterOpen(false);
     }
-  }
+  };
 
-  const isFilterApplied = Object.values(filters).some((value) => value !== '');
-
+  const isFilterApplied = Object.values(localFilters).some((value) => value !== '');
 
   return (
-    <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg shadow">
+    <div className="bg-white w-full dark:bg-gray-800 p-6 border border-gray-300 rounded-lg">
       <div className="flex items-center gap-2 mb-6">
         <SlidersHorizontal className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
@@ -69,13 +93,16 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
         {/* City Dropdown */}
         <div className="relative">
           <select
-            value={filters.city}
+            value={localFilters.city}
             onChange={(e) => {
               const cityName = e.target.value;
               const cityData = locations.find((loc: any) => loc.cityName === cityName);
               setSelectedCity(cityData);
-              updateFilter('city', cityName);
-              updateFilter('area', '');
+              setLocalFilters((prev: any) => ({
+                ...prev,
+                city: cityName,
+                area: '',
+              }));
             }}
             className="w-full appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
           >
@@ -92,8 +119,13 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
         {/* Area Dropdown */}
         <div className="relative">
           <select
-            value={filters.area}
-            onChange={(e) => updateFilter('area', e.target.value)}
+            value={localFilters.area}
+            onChange={(e) =>
+              setLocalFilters((prev: any) => ({
+                ...prev,
+                area: e.target.value,
+              }))
+            }
             disabled={!selectedCity}
             className="w-full appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
           >
@@ -107,7 +139,6 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
           <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
         </div>
 
-
         {/* Date Picker */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -116,7 +147,7 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
           <div className="relative">
             <input
               readOnly
-              value={filters.date}
+              value={localFilters.date}
               onClick={() => setShowCalendar((prev) => !prev)}
               placeholder="Select date"
               className="block w-full rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 pr-10 py-2 p-2 placeholder:text-gray-500 dark:placeholder:text-gray-400"
@@ -130,15 +161,18 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
                       const month = String(value.getMonth() + 1).padStart(2, '0');
                       const year = value.getFullYear();
                       const formatted = `${day}-${month}-${year}`;
-                      updateFilter('date', formatted);
+                      setLocalFilters((prev: any) => ({
+                        ...prev,
+                        date: formatted,
+                      }));
                       setShowCalendar(false);
                     }
                   }}
                   minDate={new Date()}
                   value={
-                    filters.date
+                    localFilters.date
                       ? (() => {
-                        const [day, month, year] = filters.date.split('-');
+                        const [day, month, year] = localFilters.date.split('-');
                         return new Date(`${year}-${month}-${day}`);
                       })()
                       : null
@@ -158,13 +192,23 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
           <div className="grid grid-cols-2 gap-4">
             <Input
               placeholder="Min"
-              value={filters.minBudget}
-              onChange={(e) => updateFilter('minBudget', e.target.value)}
+              value={localFilters.minBudget}
+              onChange={(e) =>
+                setLocalFilters((prev: any) => ({
+                  ...prev,
+                  minBudget: e.target.value,
+                }))
+              }
             />
             <Input
               placeholder="Max"
-              value={filters.maxBudget}
-              onChange={(e) => updateFilter('maxBudget', e.target.value)}
+              value={localFilters.maxBudget}
+              onChange={(e) =>
+                setLocalFilters((prev: any) => ({
+                  ...prev,
+                  maxBudget: e.target.value,
+                }))
+              }
             />
           </div>
         </div>
@@ -181,17 +225,17 @@ export function JobFilters({ filters, updateFilter, search, setSearch, setMobile
       {/* Search Button */}
       <div>
         <button
-          onClick={() => handleSearch()}
+          onClick={handleSearch}
           disabled={!isFilterApplied}
           className={`w-full py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500
           ${isFilterApplied
               ? 'bg-primary-500 text-white hover:bg-primary-600'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'}
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }
           `}
         >
           Search
         </button>
-
       </div>
     </div>
   );

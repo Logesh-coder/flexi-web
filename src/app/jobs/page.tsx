@@ -2,17 +2,49 @@
 
 import { JobFilters } from '@/components/jobs/JobFilters';
 import { JobGrid } from '@/components/jobs/JobGrid';
-import { useJobFilters } from '@/hooks/useJobFilters';
+import { useInfiniteJobs } from '@/hooks/useInfiniteJobs';
+import { JobFilters as FiltersType } from '@/types/jobs';
 import { SlidersHorizontal, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 export default function JobsPage() {
-  const { filters, updateFilter, jobs, loading, search, setSearch, searchValue, setSearchValue, loadMore, hasMore, setLimit } = useJobFilters();
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FiltersType>({
+    city: '',
+    area: '',
+    date: '',
+    minBudget: '',
+    maxBudget: '',
+    search: '',
+    id: ''
+  });
 
-  useEffect(() => {
-    setLimit(parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || '6', 10))
-  }, [])
+  const [searchValue, setSearchValue] = useState('');
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [clearFilterListPage, setClearFilterListPage] = useState(false)
+
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    refetch
+  } = useInfiniteJobs(filters);
+
+  const updateFilter = (key: keyof FiltersType, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('search')
+    const value = e.target.value;
+    setSearchValue(value);
+
+    if (value.length >= 3 || value.length === 0) {
+      updateFilter('search', value);
+    }
+  };
+
+  const isFilterApplied = Object.values(filters).some((v) => v !== '');
 
   useEffect(() => {
     if (mobileFilterOpen) {
@@ -20,20 +52,28 @@ export default function JobsPage() {
     } else {
       document.body.style.overflow = '';
     }
-
-    // Cleanup on unmount
     return () => {
       document.body.style.overflow = '';
     };
   }, [mobileFilterOpen]);
 
-  const isFilterApplied = Object.values(filters).some((value) => value !== '');
+  const allJobs = data?.pages.flatMap((page) => page.jobs) ?? [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Find Jobs</h1>
+    <div className="max-w-7xl mx-auto px-8 py-8">
+      <h1 className="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Find Jobs</h1>
 
-      <div className="md:hidden flex justify-end mb-4">
+      {/* Mobile Filter Button */}
+      <div className="md:hidden flex items-center justify-end  gap-5">
+        {isFilterApplied && (
+          <button
+            className="flex items-center gap-2 px-2 py-2 border border-primary-400 hover:bg-primary-100 rounded-lg text-sm "
+            onClick={() => setClearFilterListPage(true)}
+          >
+            <X className='w-5 h-5' />
+            Clear filter
+          </button>
+        )}
         <button
           onClick={() => setMobileFilterOpen(true)}
           className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm 
@@ -44,35 +84,38 @@ export default function JobsPage() {
           <SlidersHorizontal className="w-4 h-4" />
           Filter
         </button>
-
       </div>
 
+      {/* Layout */}
       <div className="flex relative gap-8 min-h-screen">
-        <div className="w-[30%] max-md:hidden sticky top-4 self-start h-fit">
+        <div className="w-[30%] max-md:hidden sticky top-0 pt-4 self-start h-fit">
           <JobFilters
             filters={filters}
             updateFilter={updateFilter}
-            search={search}
-            setSearch={setSearch}
+            search={true}
+            setSearch={() => refetch()}
+            clearFilterListPage={clearFilterListPage}
+            setClearFilterListPage={setClearFilterListPage}
+            setMobileFilterOpen={setMobileFilterOpen}
           />
         </div>
         <div className="md:w-[70%] w-full">
           <JobGrid
-            updateFilter={updateFilter}
-            jobs={jobs}
-            loading={loading}
+            jobs={allJobs}
+            loading={isLoading}
             searchValue={searchValue}
-            setSearchValue={setSearchValue}
-            loadMore={loadMore}
-            hasMore={hasMore}
-            type='job'
+            setSearchValue={handleSearchChange}
+            loadMore={fetchNextPage}
+            hasMore={!!hasNextPage}
+            type="job"
           />
         </div>
       </div>
 
+      {/* Mobile Filter Sidebar */}
       {mobileFilterOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-end md:hidden">
-          <div className="w-full sm:w-[400px] h-full bg-white dark:bg-gray-900 p-4 overflow-y-auto relative shadow-lg">
+          <div className="w-full sm:w-[400px] h-full max-sm:pt-[200px] bg-white dark:bg-gray-900 p-4 overflow-y-auto relative ">
             <button
               onClick={() => setMobileFilterOpen(false)}
               className="absolute top-4 mr-3 mt-3 right-4 text-gray-600 dark:text-gray-300"
@@ -82,13 +125,15 @@ export default function JobsPage() {
             <JobFilters
               filters={filters}
               updateFilter={updateFilter}
-              search={search}
-              setSearch={setSearch}
+              search={true}
+              setSearch={() => refetch()}
+              clearFilterListPage={clearFilterListPage}
+              setClearFilterListPage={setClearFilterListPage}
               setMobileFilterOpen={setMobileFilterOpen}
             />
           </div>
         </div>
       )}
     </div>
-  )
+  );
 }

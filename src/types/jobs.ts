@@ -37,4 +37,17 @@ export interface JobFilters {
   durationStartTime?: string
   durationEndTime?: string
   id?: string
+  date: string
+}
+
+export interface JobFiltersProps {
+  city?: string;
+  area?: string;
+  date?: string;
+  minBudget?: string;
+  maxBudget?: string;
+  search?: string;
+  page: number;
+  limit: number;
+  id?: string;
 }

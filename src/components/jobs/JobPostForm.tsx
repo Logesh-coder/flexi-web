@@ -130,7 +130,7 @@ export default function JobPostForm({
             control={control}
             render={({ field }) => (
               <Textarea
-                label="Job Description"
+                label="Job Description (option)"
                 {...field}
                 placeholder="Describe the job requirements and responsibilities"
                 rows={6}

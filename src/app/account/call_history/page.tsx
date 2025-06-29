@@ -24,8 +24,6 @@ export default function CallHistoryPage() {
         }
     }, [inView, hasNextPage, isFetchingNextPage]);
 
-    console.log('data', data)
-
     return (
         <div className="max-sm:m-4">
             {/* Tabs */}

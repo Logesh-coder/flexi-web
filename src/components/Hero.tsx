@@ -23,7 +23,7 @@ export function Hero() {
           </div>
 
           <div className="md:hidden flex justify-center gap-6 items-center">
-            <div onClick={() => route.push('/jobs')} className='cursor-pointer w-[160px] h-[140px] rounded-xl border-2 border-gray-300 shadow  bg-white flex flex-col justify-between px-2 py-2' >
+            <div onClick={() => route.push('/jobs')} className='cursor-pointer w-[180px] h-[160px] rounded-xl border-2 border-gray-300 shadow  bg-white flex flex-col justify-between px-2 py-2' >
               <div className='!text-start' >
                 <h4 className='text-black text-xl font-semibold ' >Job</h4>
                 <p className='text-gray-500  text-sm' >Search Jobs</p>
@@ -37,7 +37,7 @@ export function Hero() {
               </div>
             </div>
 
-            <div onClick={() => route.push('/workers')} className='cursor-pointer w-[160px] h-[140px] rounded-xl border-2 border-gray-300 shadow  bg-white flex flex-col justify-between px-2 py-2' >
+            <div onClick={() => route.push('/workers')} className='cursor-pointer w-[180px] h-[160px] rounded-xl border-2 border-gray-300 shadow  bg-white flex flex-col justify-between px-2 py-2' >
               <div className='!text-start' >
                 <h4 className='text-black text-xl font-semibold ' >Worker</h4>
                 <p className='text-gray-500  text-sm' >Search Workers</p>
