@@ -47,7 +47,7 @@ export interface JobFiltersProps {
   minBudget?: string;
   maxBudget?: string;
   search?: string;
-  page: number;
+  page?: number;
   limit: number;
   id?: string;
 }

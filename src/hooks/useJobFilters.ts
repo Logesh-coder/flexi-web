@@ -52,6 +52,7 @@ export function useJobFilters() {
 
         const response = await getJobService({ ...filters, page, limit });
 
+
         const fetchedJobs = response.data?.data?.jobs || [];
         const totalPages = response.data?.data?.pages || 1;
 

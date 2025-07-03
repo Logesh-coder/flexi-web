@@ -1,6 +1,6 @@
 import { JobFilters } from '@/types/jobs';
 import { Search } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { useEffect, useRef } from 'react';
 import Input from '../ui/Input';
 import { JobCard } from './JobCard';
 import { JobCardSkeleton } from './JobCardSkeleton';
@@ -26,12 +26,36 @@ export function JobGrid({
   loadMore,
 }: JobGridProps) {
   const jobsArray = jobs ?? [];
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!hasMore) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      {
+        root: null,
+        rootMargin: '100px',
+        threshold: 1.0,
+      }
+    );
+
+    const currentRef = observerRef.current;
+    if (currentRef) observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, [hasMore, loadMore]);
 
   return (
     <div className="flex flex-col h-full">
-      {/* Sticky search bar with bottom margin */}
-      <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 pt-4">
-        <div className="pb-2">
+      <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 my-4">
+        <div>
           <Input
             icon={Search}
             placeholder={`Search ${type === 'worker' ? `${type} domains` : 'jobs title'}...`}
@@ -42,7 +66,7 @@ export function JobGrid({
       </div>
 
       <div className="flex-1 overflow-y-auto pb-8 mt-4">
-        {loading ? (
+        {loading && !jobsArray.length ? (
           <div className="grid gap-6">
             {[...Array(2)].map((_, i) => (
               <JobCardSkeleton key={i} />
@@ -55,11 +79,8 @@ export function JobGrid({
                 {jobsArray.map((job: any) => (
                   <JobCard key={job._id} job={job} type={type} />
                 ))}
-                {hasMore && (
-                  <div className="text-center mt-8">
-                    <Button onClick={loadMore}>Load More</Button>
-                  </div>
-                )}
+                {/* Sentinel div for intersection observer */}
+                {hasMore && <div ref={observerRef} className="h-10" />}
               </>
             ) : (
               <div className="text-center py-12">

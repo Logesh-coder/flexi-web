@@ -35,7 +35,6 @@ export default function JobsPage() {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('search')
     const value = e.target.value;
     setSearchValue(value);
 
