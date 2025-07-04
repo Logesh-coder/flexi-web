@@ -1,19 +1,32 @@
+'use client'
+
+import Input from '@/components/ui/Input';
 import { getLocationService } from '@/services/get-location';
 import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import 'react-calendar/dist/Calendar.css';
-import Input from '../ui/Input';
 
-interface JobFilterProps {
+interface WorkerFilterProps {
     filters: any;
     updateFilter: any;
     search: boolean;
     setSearch: React.Dispatch<React.SetStateAction<boolean>>;
+    clearFilterListPage: boolean;
+    setClearFilterListPage: React.Dispatch<React.SetStateAction<boolean>>;
+    setMobileFilterOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function WorkersFilters({ filters, updateFilter, search, setSearch }: JobFilterProps) {
+function WorkersFilters({
+    filters,
+    updateFilter,
+    search,
+    setSearch,
+    clearFilterListPage,
+    setClearFilterListPage,
+    setMobileFilterOpen,
+}: WorkerFilterProps) {
     const [locations, setLocations] = useState([]);
     const [selectedCity, setSelectedCity] = useState<any>(null);
+    const [localFilters, setLocalFilters] = useState(filters);
 
     useEffect(() => {
         const fetchLocations = async () => {
@@ -24,26 +37,47 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                 console.error('Failed to fetch locations', err);
             }
         };
-
         fetchLocations();
     }, []);
 
-    const clearFilters = () => {
-        const emptyFilters: any = {
+    useEffect(() => {
+        setLocalFilters(filters);
+    }, [filters]);
+
+    const resetFilters = () => {
+        const empty = {
             search: '',
             city: '',
             area: '',
             minBudget: '',
             maxBudget: '',
         };
-
-        for (const key in emptyFilters) {
-            updateFilter(key as keyof any, '');
-        }
-
+        setLocalFilters(empty);
+        Object.keys(empty).forEach((key) => updateFilter(key, ''));
         setSelectedCity(null);
         setSearch(!search);
+
+        if (setMobileFilterOpen) setMobileFilterOpen(false);
     };
+
+    const handleSearch = () => {
+        Object.entries(localFilters).forEach(([key, val]) => updateFilter(key, val));
+        setSearch(!search);
+
+        if (setMobileFilterOpen) setMobileFilterOpen(false);
+    };
+
+    const isFilterApplied = localFilters &&
+        Object.entries(localFilters).some(
+            ([key, value]) => key !== 'search' && value !== ''
+        );
+
+    useEffect(() => {
+        if (clearFilterListPage) {
+            resetFilters();
+            setClearFilterListPage(false);
+        }
+    }, [clearFilterListPage]);
 
     return (
         <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg shadow">
@@ -56,15 +90,18 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                 {/* City Dropdown */}
                 <div className="relative">
                     <select
-                        value={filters.city}
+                        value={localFilters?.city}
                         onChange={(e) => {
                             const cityName = e.target.value;
                             const cityData = locations.find((loc: any) => loc.cityName === cityName);
                             setSelectedCity(cityData);
-                            updateFilter('city', cityName);
-                            updateFilter('area', '');
+                            setLocalFilters((prev: any) => ({
+                                ...prev,
+                                city: cityName,
+                                area: '',
+                            }));
                         }}
-                        className="w-full outline-none appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 dark:bg-gray-700  dark:text-gray-300"
+                        className="  w-full outline-none appearance-none border dark:border-black rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-300"
                     >
                         <option value="">Select a city</option>
                         {locations.map((loc: any) => (
@@ -79,10 +116,12 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                 {/* Area Dropdown */}
                 <div className="relative">
                     <select
-                        value={filters.area}
-                        onChange={(e) => updateFilter('area', e.target.value)}
+                        value={localFilters?.area}
+                        onChange={(e) =>
+                            setLocalFilters((prev: any) => ({ ...prev, area: e.target.value }))
+                        }
                         disabled={!selectedCity}
-                        className="w-full dark:bg-gray-700 dark:text-gray-300 appearance-none border rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        className="w-full appearance-none border dark:border-black rounded-lg px-3 py-[10px] pr-10 focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-300"
                     >
                         <option value="">Select an area</option>
                         {selectedCity?.areas?.map((area: any) => (
@@ -102,13 +141,17 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
                     <div className="grid grid-cols-2 gap-4">
                         <Input
                             placeholder="Min"
-                            value={filters.minBudget}
-                            onChange={(e) => updateFilter('minBudget', e.target.value)}
+                            value={localFilters?.minBudget}
+                            onChange={(e) =>
+                                setLocalFilters((prev: any) => ({ ...prev, minBudget: e.target.value }))
+                            }
                         />
                         <Input
                             placeholder="Max"
-                            value={filters.maxBudget}
-                            onChange={(e) => updateFilter('maxBudget', e.target.value)}
+                            value={localFilters?.maxBudget}
+                            onChange={(e) =>
+                                setLocalFilters((prev: any) => ({ ...prev, maxBudget: e.target.value }))
+                            }
                         />
                     </div>
                 </div>
@@ -117,7 +160,7 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
             {/* Clear Filter */}
             <button
                 className="my-2 mt-4 text-end w-full capitalize text-sm hover:underline"
-                onClick={clearFilters}
+                onClick={resetFilters}
             >
                 clear filter
             </button>
@@ -125,8 +168,13 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
             {/* Search Button */}
             <div>
                 <button
-                    onClick={() => setSearch(!search)}
-                    className="w-full py-2 px-4 bg-primary-500 text-white rounded-lg hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    onClick={handleSearch}
+                    disabled={!isFilterApplied}
+                    className={`w-full py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500
+            ${isFilterApplied
+                            ? 'bg-primary-500 text-white hover:bg-primary-600'
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
                 >
                     Search
                 </button>
@@ -134,3 +182,5 @@ export function WorkersFilters({ filters, updateFilter, search, setSearch }: Job
         </div>
     );
 }
+
+export default WorkersFilters

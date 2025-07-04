@@ -1,26 +1,35 @@
+// services/workers.ts
 import { AxiosInstance } from './api';
 
-interface WorkerFiltersProps {
-    city: string;
-    area: string;
-    minBudget: string;
-    maxBudget: string;
+export interface Worker {
+    _id: string;
+    name: string;
+    domain: string;
+}
+
+export interface WorkerFiltersProps {
+    city?: string;
+    area?: string;
+    minBudget?: string;
+    maxBudget?: string;
     search?: string;
     page?: number;
     limit?: number;
 }
 
-const getWorkersService = (filters: WorkerFiltersProps) => {
+export interface WorkerResponse {
+    workers: Worker[];
+    pages: number;
+}
 
-    const cleanedFilters = Object.fromEntries(
-        Object.entries(filters).filter(([key, value]) => value !== '' && value !== undefined)
+const getWorkersService = async (
+    filters: WorkerFiltersProps
+): Promise<WorkerResponse> => {
+    const cleaned = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== '' && v !== undefined)
     );
-
-    const res = AxiosInstance.get('/user/workers', {
-        params: cleanedFilters,
-    });
-
-    return res;
+    const res = await AxiosInstance.get('/user/workers', { params: cleaned });
+    return res.data.data;
 };
 
 export default getWorkersService;

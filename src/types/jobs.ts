@@ -48,6 +48,7 @@ export interface JobFiltersProps {
   maxBudget?: string;
   search?: string;
   page?: number;
-  limit: number;
+  limit?: number; // <-- make it optional
   id?: string;
 }
+

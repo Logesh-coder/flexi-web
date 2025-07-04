@@ -43,27 +43,28 @@ export function useWorkerFilters() {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                setLoading(true)
+                setLoading(true);
 
-                const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || "10", 10);
+                const limit = parseInt(process.env.NEXT_PUBLIC_PAGELIMIT || '10', 10);
+                const response = await getWorkersService({ ...filters, page, limit });
 
-                const response = await getWorkersService({ ...filters, page, limit: limit });
+                const fetchedWorkers = response.workers || [];
+                const totalPages = response.pages || 1;
 
-                const fetchedWorkers = response.data?.data?.workers || [];
-                const totalPages = response.data?.data?.pages || 1;
-
-                setWorkers(prev => (page === 1 ? fetchedWorkers : [...prev, ...fetchedWorkers]));
+                setWorkers(prev =>
+                    page === 1 ? fetchedWorkers : [...prev, ...fetchedWorkers]
+                );
                 setHasMore(page < totalPages);
-
             } catch (err: any) {
-                setError(err.message || 'Failed to fetch jobs')
+                setError(err.message || 'Failed to fetch jobs');
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchJobs()
-    }, [search, filters.search, page])
+        fetchJobs();
+    }, [search, filters.search, page]);
+
 
     return {
         filters,
