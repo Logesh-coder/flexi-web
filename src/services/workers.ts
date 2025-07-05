@@ -28,7 +28,10 @@ const getWorkersService = async (
     const cleaned = Object.fromEntries(
         Object.entries(filters).filter(([_, v]) => v !== '' && v !== undefined)
     );
+
     const res = await AxiosInstance.get('/user/workers', { params: cleaned });
+
+    // Assuming your API returns: { data: { workers: [], pages: number } }
     return res.data.data;
 };
 
