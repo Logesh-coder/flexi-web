@@ -76,7 +76,7 @@ export default function forgotPassword() {
                     </div>
                 ) : (
                     <Button type="submit" className="w-full">
-                        Sign in
+                        Login
                     </Button>
                 )}
             </form>
@@ -86,7 +86,7 @@ export default function forgotPassword() {
                     href="/register"
                     className="text-primary-600 hover:text-primary-500"
                 >
-                    Sign up
+                    login up
                 </Link>
             </p>
         </AuthLayout>

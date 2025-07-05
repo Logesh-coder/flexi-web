@@ -65,7 +65,7 @@ export function AccountNav() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl"
+              className="bg-white dark:bg-gray-900 p-6 border dark:border-gray-400 rounded-xl w-full max-w-sm shadow-xl"
               initial={{ scale: 0.9, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 50 }}

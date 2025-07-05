@@ -86,7 +86,7 @@ function LoginPageComponent() {
   }, [searchParams]);
 
   return (
-    <AuthLayout title="Welcome back" subtitle="Sign in to your account">
+    <AuthLayout title="Welcome back" subtitle="Login to your account">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-4">
           <div>
@@ -138,7 +138,7 @@ function LoginPageComponent() {
           </div>
         ) : (
           <Button type="submit" className="w-full">
-            Sign in
+            Login
           </Button>
         )}
 
@@ -151,7 +151,7 @@ function LoginPageComponent() {
             }}
           >
             <Image src={googleImg} alt="Google" className="w-5 h-5" />
-            Sign in with Google
+            Login with Google
           </button>
         </div>
 

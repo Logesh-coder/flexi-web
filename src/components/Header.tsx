@@ -83,7 +83,7 @@ export function Header() {
                     href="/login"
                     className="text-sm ml-2 border-primary-500 border text-primary-500 px-4 py-[8px] rounded-lg"
                   >
-                    Sign In
+                    Login
                   </Link>
                 )}
               </>

@@ -45,7 +45,7 @@ export function JobCard({ job, type }: JobCardProps) {
       if (axios.isAxiosError(error)) {
         const tokenError = error.response?.data?.message;
         if (tokenError === 'Authorization token is required') {
-          toast.error('Please sign in to add items to your wishlist.');
+          toast.error('Please Login to add items to your wishlist.');
         }
       } else {
         toast.error('Something went wrong. Please try again.');
