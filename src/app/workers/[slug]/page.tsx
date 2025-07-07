@@ -5,7 +5,7 @@ import { addCall } from '@/services/add-call';
 import getSingleWorkerService from '@/services/get-single-worker';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Heart, Mail, MapPin, User } from 'lucide-react';
+import { Heart, Loader2, Mail, MapPin, User } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
@@ -33,14 +33,32 @@ export default function WorkerDetailPage() {
     },
   });
 
+  // const handleCall = () => {
+  //   const token = localStorage.getItem('TOKEN');
+  //   if (token) {
+  //     callMutation.mutate();
+  //   } else {
+  //     setShowCallWarning(true);
+  //   }
+  // };
+
   const handleCall = () => {
+    if (!data?.mobile) return;
+
     const token = localStorage.getItem('TOKEN');
+    const number = data.mobile;
+
+    // Open dialer immediately
+    window.location.href = `tel:${number}`;
+
+    // Track call if logged in
     if (token) {
       callMutation.mutate();
     } else {
       setShowCallWarning(true);
     }
   };
+
 
   const toggleWishlist = () => {
     setIsWishlisted(prev => !prev);
@@ -160,9 +178,18 @@ export default function WorkerDetailPage() {
           {isLoading ? (
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
           ) : (
-            <Button onClick={handleCall} disabled={callMutation.isPending} className="w-full">
-              {callMutation.isPending ? 'Calling...' : 'Call Now'}
-            </Button>
+            <>
+
+              {callMutation.isPending ? (
+                <Button className="w-full">
+                  <Loader2 className="w-6 h-6 animate-spin text-white" />
+                </Button>
+              ) : (
+                <Button onClick={handleCall} className="w-full">
+                  Call Now
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

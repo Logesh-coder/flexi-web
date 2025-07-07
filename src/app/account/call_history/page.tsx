@@ -32,7 +32,7 @@ export default function CallHistoryPage() {
                     <button
                         key={t}
                         onClick={() => setTab(t)}
-                        className={`py-2 px-6 rounded-full text-sm font-semibold ${tab === t
+                        className={`py-2 px-6 rounded-full text-base font-semibold ${tab === t
                             ? 'bg-primary-600 text-white'
                             : 'bg-gray-200 text-gray-800'
                             }`}

@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function HelpAndSupportHomeSection() {
     return (
         <section className="bg-gray-50 dark:bg-gray-900 py-12">
-            <div className="max-w-6xl mx-auto px-4 flex flex-wrap items-center justify-between gap-6">
+            <div className="max-w-7xl mx-auto px-8 flex flex-wrap items-center justify-between gap-6">
                 <div>
                     <h2 className="text-2xl md:text-2xl font-bold text-gray-900 dark:text-white">
                         Need Help & Support?
