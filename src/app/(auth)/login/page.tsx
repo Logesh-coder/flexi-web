@@ -6,7 +6,7 @@ import loginService from '@/services/auth/login';
 import { loginValidator } from '@/validators/auth.validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
-import { Lock, Mail } from 'lucide-react';
+import { Loader2, Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -173,7 +173,13 @@ function LoginPageComponent() {
 
 export default function Page() {
   return (
-    <Suspense fallback="Loading...">
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
+        </div>
+      }
+    >
       <LoginPageComponent />
     </Suspense>
   )

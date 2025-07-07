@@ -8,7 +8,7 @@ import getSingleJobService from '@/services/get-single-job-service';
 import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CalendarDays, Clock, MapPin, User } from 'lucide-react';
+import { CalendarDays, Clock, Loader2, MapPin, User } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -20,32 +20,34 @@ export default function JobDetailPage() {
   const [isSaved, setIsSaved] = useState(false);
   const [showCallWarning, setShowCallWarning] = useState(false);
 
-  // Fetch job data
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['job', slug],
     queryFn: () => getSingleJobService(slug as string).then((res) => res.data.data),
     enabled: !!slug,
   });
 
-  // Update saved state when job data is fetched
+  const userMobileNumber = data?.createUserId?.mobile
+
+
   useEffect(() => {
     if (typeof data?.isSaved === 'boolean') {
       setIsSaved(data.isSaved);
     }
   }, [data?.isSaved]);
 
-  // Mutation: Track call
   const callMutation = useMutation({
     mutationFn: () => addCall({ job: data?._id }),
     onSuccess: () => {
-      window.location.href = `tel:${data?.createUser?.mobile}`;
+      // if (userMobileNumber) {
+      //   window.location.href = `tel:${userMobileNumber}`;
+      // }
     },
+
     onError: (err) => {
       console.error('Call failed', err);
     },
   });
 
-  // Wishlist toggle
   const toggleWishlist = async () => {
     try {
       if (isSaved) {
@@ -59,9 +61,15 @@ export default function JobDetailPage() {
     }
   };
 
-  // Handle call button click
+
   const handleCall = () => {
     const token = localStorage.getItem('TOKEN');
+    const number = data?.createUserId?.mobile;
+
+    if (!number) return;
+
+    window.location.href = `tel:${number}`;
+
     if (token) {
       callMutation.mutate();
     } else {
@@ -69,7 +77,11 @@ export default function JobDetailPage() {
     }
   };
 
-  if (isError) return <p className="text-red-500">{(error as any)?.message || 'Something went wrong'}</p>;
+
+  if (isError) {
+    return <p className="text-red-500">{(error as any)?.message || 'Something went wrong'}</p>;
+  }
+
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -87,10 +99,7 @@ export default function JobDetailPage() {
               </h1>
 
               <div className="flex">
-                <WishlistButton
-                  isSaved={isSaved}
-                  toggleWishlist={toggleWishlist}
-                />
+                <WishlistButton isSaved={isSaved} toggleWishlist={toggleWishlist} />
                 <ShareButtons url={jobUrl} title="Apply for this amazing job!" />
               </div>
             </div>
@@ -185,20 +194,17 @@ export default function JobDetailPage() {
           {isLoading ? (
             <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse w-full" />
           ) : (
-            <Button
-              onClick={() => {
-                const token = localStorage.getItem('TOKEN');
-                if (token) {
-                  callMutation.mutate();
-                } else {
-                  setShowCallWarning(true);
-                }
-              }}
-              className="w-full"
-            >
-              {callMutation.isPending ? 'Calling...' : 'Call Now'}
-            </Button>
-
+            <>
+              {callMutation.isPending ? (
+                <Button className="w-full">
+                  <Loader2 className="w-6 h-6 animate-spin text-white" />
+                </Button>
+              ) : (
+                <Button onClick={handleCall} className="w-full">
+                  Call Now
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -235,7 +241,8 @@ export default function JobDetailPage() {
                   onClick={() => {
                     setShowCallWarning(false);
                     setTimeout(() => {
-                      window.location.href = `tel:${data?.createUser?.mobile}`;
+                      const number = userMobileNumber;
+                      if (number) window.location.href = `tel:${number}`;
                     }, 100);
                   }}
                   className="px-4 py-2 text-sm rounded-md bg-primary-600 text-white hover:bg-primary-700"

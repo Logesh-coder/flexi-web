@@ -80,7 +80,7 @@ function WorkersFilters({
     }, [clearFilterListPage]);
 
     return (
-        <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg shadow">
+        <div className="bg-white w-full dark:bg-gray-800 p-6 rounded-lg border border-gray-300">
             <div className="flex items-center gap-2 mb-6">
                 <SlidersHorizontal className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
