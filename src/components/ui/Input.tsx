@@ -75,7 +75,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                   <Calendar
                     onChange={(date, _event) => {
                       if (date) {
-                        const formatted = new Date(date as any).toLocaleDateString('en-CA');
+                        const selectedDate = new Date(date as any);
+                        const formatted = `${selectedDate
+                          .getDate()
+                          .toString()
+                          .padStart(2, '0')}/${(selectedDate.getMonth() + 1)
+                            .toString()
+                            .padStart(2, '0')}/${selectedDate.getFullYear()}`;
                         if (setValue && name) {
                           setValue(name, formatted, { shouldValidate: true });
                         } else {
@@ -87,7 +93,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                     className="!w-full dark:!bg-black"
                     minDate={minDate}
                     maxDate={maxDate}
-                    value={value ? new Date(value) : null}
+                    value={
+                      value
+                        ? (() => {
+                          const [day, month, year] = value.split('/');
+                          return new Date(`${year}-${month}-${day}`);
+                        })()
+                        : null
+                    }
                   />
                 </div>
               )}

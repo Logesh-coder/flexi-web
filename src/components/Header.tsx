@@ -30,7 +30,7 @@ export function Header() {
           <div className="flex items-center">
             <Link
               href="/"
-              className="text-[25px] font-bold text-primary-700 dark:text-primary-700"
+              className="text-[25px] font-bold text-primary-600"
             >
               {/* <Image src={logo} alt='logo' width={70} height={70} /> */}
               Flexi

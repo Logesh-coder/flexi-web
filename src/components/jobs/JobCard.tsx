@@ -80,7 +80,6 @@ export function JobCard({ job, type }: JobCardProps) {
             <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               <Link
                 href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`}
-                className="hover:underline"
                 onClick={(e) => isPostingPage && e.preventDefault()}
               >
                 {type === 'worker' ? job.name : job.title}

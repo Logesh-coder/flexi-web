@@ -1,3 +1,5 @@
+'use client';
+
 import editProfile from '@/services/edit-profile';
 import myProfile from '@/services/my-profile';
 import { AxiosError } from 'axios';
@@ -19,49 +21,63 @@ interface Profile {
   salary?: string;
   city?: string;
   area?: string;
-  isActive: Boolean
+  isActive: boolean;
 }
 
 export function ProfileSettings() {
   const [originalProfile, setOriginalProfile] = useState<Partial<Profile>>({});
-  const [profile, setProfile] = useState<Partial<Profile>>({});
+  const [editableProfile, setEditableProfile] = useState<Partial<Profile>>({});
   const [showCalendar, setShowCalendar] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
-  const [validationErrors, setValidationErrors] = useState<{ salary?: string; mobile?: string }>({});
+  const [submitted, setSubmitted] = useState(false);
 
-  const hasChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
+  const hasChanges = JSON.stringify(editableProfile) !== JSON.stringify(originalProfile);
+
+  const missingFields: string[] = [];
+  if (!editableProfile?.mobile) missingFields.push('mobile');
+  if (!editableProfile?.date_of_birth) missingFields.push('Date of Birth');
+  if (!editableProfile?.city) missingFields.push('city');
+  if (!editableProfile?.area) missingFields.push('area');
+  if (!editableProfile?.domain) missingFields.push('work domains');
 
   const handleSaveChanges = async () => {
-    const errors: { salary?: string; mobile?: string } = {};
+    setSubmitted(true);
 
-    // Mobile Validation (if entered)
-    const mobileStr = profile.mobile?.toString();
-    if (mobileStr && mobileStr.length !== 10) {
-      errors.mobile = 'Mobile number must be exactly 10 digits';
-    }
+    if (missingFields.length > 0) return;
 
-    setValidationErrors(errors);
-
-    if (Object.keys(errors).length > 0) return;
     if (hasChanges) {
       try {
-        const response = await editProfile(profile);
+        const response = await editProfile(editableProfile);
         if (response.status === 200) {
           setAlertType('success');
           setAlertMessage('Profile updated successfully!');
-          setOriginalProfile(profile);
+          setOriginalProfile(editableProfile);
         } else {
           setAlertType('error');
           setAlertMessage('Failed to update profile');
         }
       } catch (err) {
-        setAlertType('error');
         const error = err as AxiosError<{ message: string }>;
+        setAlertType('error');
         setAlertMessage(error.response?.data?.message || 'Something went wrong');
       }
     }
   };
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await myProfile();
+        setOriginalProfile(response?.data?.data);
+        setEditableProfile(response?.data?.data);
+      } catch (err) {
+        console.error('Failed to load profile', err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     if (alertMessage) {
@@ -72,40 +88,13 @@ export function ProfileSettings() {
     }
   }, [alertMessage]);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await myProfile();
-        console.log('res', response)
-        setProfile(response?.data?.data);
-        setOriginalProfile(response?.data?.data)
-      } catch (err: any) {
-        console.error('Failed to load profile', err);
-      }
-    };
-
-    fetchProfile();
-  }, [alertMessage]);
-
-  console.log('profile', profile)
-
-  const missingFields: string[] = [];
-
-  if (!profile?.mobile) missingFields.push('mobile');
-  if (!profile?.date_of_birth) missingFields.push('Date of Birth');
-  if (!profile?.city) missingFields.push('city');
-  if (!profile?.area) missingFields.push('area');
-  if (!profile?.domain) missingFields.push('work domains');
-
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      {profile.isActive == false && (
-        <div id="alert-2" className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-          <svg className="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+      {editableProfile.isActive === false && (
+        <div className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
+          <svg className="shrink-0 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
           </svg>
-          <span className="sr-only">Info</span>
           <div className="ms-3 text-sm font-medium">
             {missingFields.length > 0
               ? `Your account is not active. Please enter your ${missingFields.join(', ')} to activate it.`
@@ -114,15 +103,17 @@ export function ProfileSettings() {
         </div>
       )}
 
-      <h2 className="sm:text-xl text-base font-semibold mb-6 text-gray-900 dark:text-white">Profile Information</h2>
+      <h2 className="sm:text-xl text-base font-semibold mb-6 text-gray-900 dark:text-white">
+        Profile Information
+      </h2>
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             icon={User}
             label="Full Name"
-            value={profile.name || ''}
-            onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+            value={editableProfile.name || ''}
+            onChange={(e) => setEditableProfile({ ...editableProfile, name: e.target.value })}
           />
           <Input
             icon={Mail}
@@ -130,25 +121,23 @@ export function ProfileSettings() {
             type="email"
             className="cursor-not-allowed"
             disabled
-            value={profile.email || ''}
+            value={editableProfile.email || ''}
           />
+          <Input
+            icon={Phone}
+            label="Mobile"
+            type="number"
+            value={editableProfile.mobile?.toString() || ''}
+            onChange={(e) => setEditableProfile({ ...editableProfile, mobile: Number(e.target.value) })}
+          />
+          {submitted && !editableProfile.mobile && (
+            <p className="absolute left-0 -bottom-5 text-xs text-red-500">Mobile is required</p>
+          )}
 
-          <div>
-            <Input
-              icon={Phone}
-              label="Mobile"
-              value={profile.mobile?.toString() || ''}
-              onChange={(e) => setProfile({ ...profile, mobile: Number(e.target.value) })}
-            />
-
-            {validationErrors.mobile && (
-              <p className="text-red-500 text-sm mt-1">{validationErrors.mobile}</p>
-            )}
-          </div>
-
-          {/* Date of Birth Input with Calendar */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date of Birth</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Date of Birth
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <CalendarIcon className="h-5 w-5 text-gray-400" />
@@ -156,8 +145,8 @@ export function ProfileSettings() {
               <input
                 readOnly
                 value={
-                  profile.date_of_birth
-                    ? new Date(profile.date_of_birth).toLocaleDateString('en-GB') // DD-MM-YYYY format
+                  editableProfile.date_of_birth
+                    ? new Date(editableProfile.date_of_birth).toLocaleDateString('en-GB')
                     : ''
                 }
                 onClick={() => setShowCalendar((prev) => !prev)}
@@ -167,7 +156,6 @@ export function ProfileSettings() {
                   dark:focus:ring-primary-500 dark:focus:border-primary-500
                   pl-10 pr-4 py-2"
               />
-
               {showCalendar && (
                 <div className="absolute z-50 mt-2 shadow-lg rounded-lg bg-white dark:bg-gray-800">
                   <Calendar
@@ -176,48 +164,56 @@ export function ProfileSettings() {
                         const year = date.getFullYear();
                         const month = String(date.getMonth() + 1).padStart(2, '0');
                         const day = String(date.getDate()).padStart(2, '0');
-                        const formattedDate = `${year}-${month}-${day}`;
-                        setProfile({ ...profile, date_of_birth: formattedDate });
+                        const formatted = `${year}-${month}-${day}`;
+                        setEditableProfile({ ...editableProfile, date_of_birth: formatted });
                         setShowCalendar(false);
                       }
                     }}
                     className="!w-full dark:!bg-black"
-                    value={profile.date_of_birth ? new Date(profile.date_of_birth) : null}
+                    value={
+                      editableProfile.date_of_birth
+                        ? new Date(editableProfile.date_of_birth)
+                        : undefined
+                    }
                   />
-
                 </div>
               )}
             </div>
-          </div>
-
-          <CityAreaSelector profile={profile} setProfile={setProfile} />
-
-          <div className='w-full' >
-            <Input
-              icon={IndianRupee}
-              label="Your Daily Salary"
-              type="number"
-              placeholder='(min. 250)'
-              value={profile.salary || ''}
-              onChange={(e) => setProfile({ ...profile, salary: e.target.value })}
-            />
-            {validationErrors.salary && (
-              <p className="text-red-500 text-sm mt-1">{validationErrors.salary}</p>
+            {submitted && !editableProfile.date_of_birth && (
+              <p className="absolute left-0 -bottom-5 text-xs text-red-500">Date of Birth is required</p>
             )}
           </div>
 
+          <CityAreaSelector profile={editableProfile} setProfile={setEditableProfile} />
+          {submitted && (!editableProfile.city || !editableProfile.area) && (
+            <p className="absolute left-0 -bottom-5 text-xs text-red-500">City and Area are required</p>
+          )}
+
+          <Input
+            icon={IndianRupee}
+            label="Your Daily Salary"
+            type="number"
+            placeholder="(min. 250)"
+            value={editableProfile.salary || ''}
+            onChange={(e) => setEditableProfile({ ...editableProfile, salary: e.target.value })}
+          />
         </div>
 
         <Textarea
-          label='Your Working Domains (ex : catering service man or electrical helper) '
-          value={profile.domain || ''}
-          onChange={(e) => setProfile({ ...profile, domain: e.target.value })}
+          label="Your Working Domains (ex: catering service man or electrical helper)"
+          value={editableProfile.domain || ''}
+          onChange={(e) => setEditableProfile({ ...editableProfile, domain: e.target.value })}
         />
+        {submitted && !editableProfile.domain && (
+          <p className="absolute left-0 -bottom-5 text-xs text-red-500">Work domain is required</p>
+        )}
 
         <div className="flex justify-end">
           <button
             disabled={!hasChanges}
-            className={`text-sm px-3 py-2 rounded-lg text-white transition-colors duration-200 ${hasChanges ? 'bg-primary-500 hover:bg-primary-600' : 'bg-primary-300 cursor-not-allowed'
+            className={`text-sm px-3 py-2 rounded-lg text-white transition-colors duration-200 ${hasChanges
+              ? 'bg-primary-500 hover:bg-primary-600'
+              : 'bg-primary-300 cursor-not-allowed'
               }`}
             onClick={handleSaveChanges}
           >
@@ -228,7 +224,7 @@ export function ProfileSettings() {
 
       {alertMessage && (
         <div
-          className={`p-4 mb-4 text-sm rounded-lg ${alertType === 'success'
+          className={`p-4 mt-4 text-sm rounded-lg ${alertType === 'success'
             ? 'text-green-800 bg-green-100'
             : 'text-red-800 bg-red-100'
             }`}
@@ -237,7 +233,6 @@ export function ProfileSettings() {
           {alertMessage}
         </div>
       )}
-
     </div>
   );
 }
