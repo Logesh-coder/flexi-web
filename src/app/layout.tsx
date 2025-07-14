@@ -1,4 +1,5 @@
 import { Header } from '@/components/Header'
+import OfflineNotice from '@/components/OfflineNotice'
 import TanStackQueryProvider from '@/providers/tanstack-query-provider'
 import { ThemeProvider } from '@/providers/theme-provider'
 import type { Metadata } from 'next'
@@ -36,6 +37,7 @@ export default function RootLayout({
             <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
               <Header />
               {children}
+              <OfflineNotice />
             </div>
           </ThemeProvider>
         </TanStackQueryProvider>

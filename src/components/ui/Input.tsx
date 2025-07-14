@@ -1,41 +1,68 @@
+'use client';
+
 import { Eye, EyeOff, LucideIcon } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { forwardRef, useEffect, useRef, useState } from 'react';
-import Calendar from 'react-calendar';
+
+const Calendar = dynamic(() => import('react-calendar'), { ssr: false });
+const TimePicker = dynamic(() => import('react-time-picker'), { ssr: false });
+
 import 'react-calendar/dist/Calendar.css';
 import 'react-clock/dist/Clock.css';
-import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  icon?: LucideIcon
-  label?: string
-  error?: string | any
-  value?: any
-  onChange?: (e: any) => void
-  setValue?: (field: string, value: any, options?: object) => void
-  name?: string
+interface InputProps<T = any> extends React.InputHTMLAttributes<HTMLInputElement> {
+  icon?: LucideIcon;
+  label?: string;
+  error?: string;
+  value?: any;
+  onChange?: (e: any) => void;
+  setValue?: (field: Extract<keyof T, string>, value: any, options?: object) => void;
+  name?: Extract<keyof T, string>;
   minDate?: Date;
-  maxDate?: Date | any;
+  maxDate?: Date;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ icon: Icon, label, error, type, className = '', value, onChange, setValue, name, minDate, maxDate = '', ...props }, ref) => {
-    const [showPassword, setShowPassword] = useState(false)
-    const [showCalendar, setShowCalendar] = useState(false)
+  (
+    {
+      icon: Icon,
+      label,
+      error,
+      type,
+      className = '',
+      value,
+      onChange,
+      setValue,
+      name,
+      minDate,
+      maxDate,
+      ...props
+    },
+    ref
+  ) => {
+    const [showPassword, setShowPassword] = useState(false);
+    const [showCalendar, setShowCalendar] = useState(false);
+    const [hasMounted, setHasMounted] = useState(false);
+    const calendarRef = useRef<HTMLDivElement>(null);
 
-    const calendarRef = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+      setHasMounted(true);
+    }, []);
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (calendarRef.current && !calendarRef.current.contains(event.target as Node)) {
-          setShowCalendar(false)
+          setShowCalendar(false);
         }
-      }
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside)
-      }
-    }, [])
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const baseInputClasses = `block w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'
+      } dark:${error ? 'border-red-500' : 'border-gray-600'} bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 ${Icon ? 'pl-10' : 'pl-4'
+      } pr-10 py-2 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${className}`;
 
     return (
       <div className="relative" ref={calendarRef}>
@@ -56,32 +83,20 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             <>
               <input
                 readOnly
-                value={value || ''}
+                value={value ? new Date(value).toLocaleDateString('en-GB') : ''}
                 onClick={() => setShowCalendar((prev) => !prev)}
-                onWheel={(e) => e.currentTarget.blur()}
-                className={`block w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'
-                  } dark:${error ? 'border-red-500' : 'border-gray-600'}
-                  bg-white dark:bg-gray-700 
-                  text-gray-900 dark:text-white
-                  focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-                  dark:focus:ring-primary-500 dark:focus:border-primary-500
-                  ${Icon ? 'pl-10' : 'pl-4'} pr-10 py-2
-                  placeholder:text-gray-500 dark:placeholder:text-gray-400
-                  ${className}`}
-                {...props}
+                placeholder="DD/MM/YYYY"
+                className={baseInputClasses}
               />
-              {showCalendar && (
+              {hasMounted && showCalendar && (
                 <div className="absolute w-full z-50 mt-2 shadow-lg rounded-lg bg-white dark:bg-gray-800">
                   <Calendar
-                    onChange={(date, _event) => {
-                      if (date) {
-                        const selectedDate = new Date(date as any);
-                        const formatted = `${selectedDate
-                          .getDate()
-                          .toString()
-                          .padStart(2, '0')}/${(selectedDate.getMonth() + 1)
-                            .toString()
-                            .padStart(2, '0')}/${selectedDate.getFullYear()}`;
+                    onChange={(date) => {
+                      if (date instanceof Date) {
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        const formatted = `${year}-${month}-${day}`;
                         if (setValue && name) {
                           setValue(name, formatted, { shouldValidate: true });
                         } else {
@@ -90,68 +105,51 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
                         setShowCalendar(false);
                       }
                     }}
-                    className="!w-full dark:!bg-black"
                     minDate={minDate}
                     maxDate={maxDate}
-                    value={
-                      value
-                        ? (() => {
-                          const [day, month, year] = value.split('/');
-                          return new Date(`${year}-${month}-${day}`);
-                        })()
-                        : null
-                    }
+                    value={value ? new Date(value) : undefined}
+                    className="!w-full dark:!bg-black"
                   />
                 </div>
               )}
             </>
-          )
-            : type === 'time' ? (
-              <>
-                <div className="relative w-full">
-                  <div className="block w-full rounded-lg border 
-                    bg-white dark:bg-gray-700 
-                    text-gray-900 dark:text-white 
-                    border-gray-300 dark:border-gray-600 
-                    focus-within:ring-1 focus-within:ring-primary-500 focus-within:border-primary-500
-                    px-4 py-2 ${className}"
-                  >
-                    <TimePicker
-                      onChange={(time) => {
-                        if (setValue && name) {
-                          setValue(name, time, { shouldValidate: true });
-                        } else {
-                          onChange?.(time);
-                        }
-                      }}
-                      value={value}
-                      disableClock={false}
-                      clearIcon={null}
-                      className="!w-full dark:!bg-gray-700 !border-none dark:!text-white"
-                    />
-                  </div>
-                </div>
-
-              </>
+          ) : type === 'time' ? (
+            hasMounted ? (
+              <div
+                className={`relative w-full rounded-lg px-4 py-2 ${error
+                    ? 'border border-red-500'
+                    : 'border border-gray-300 dark:border-gray-600'
+                  } bg-white dark:bg-gray-700`}
+              >
+                <TimePicker
+                  onChange={(time) => {
+                    if (setValue && name) {
+                      setValue(name, time, { shouldValidate: true });
+                    } else {
+                      onChange?.(time);
+                    }
+                  }}
+                  value={value || ''}
+                  disableClock={false}
+                  clearIcon={null}
+                  format="HH:mm"
+                  className="!w-full dark:!bg-gray-700 !border-none dark:!text-white"
+                />
+              </div>
             ) : (
-              <input
-                ref={ref}
-                type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
-                value={value}
-                onChange={onChange}
-                onWheel={(e) => e.currentTarget.blur()}
-                className={`block w-full rounded-lg border ${error ? 'border-red-500' : 'border-gray-300'
-                  } dark:${error ? 'border-red-500' : 'border-gray-600'}
-                bg-white dark:bg-gray-700 
-                text-gray-900 dark:text-white
-                focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-                dark:focus:ring-primary-500 dark:focus:border-primary-500
-                ${Icon ? 'pl-10' : 'pl-4'} pr-10 py-2
-                placeholder:text-gray-500 dark:placeholder:text-gray-400
-                ${className}`}
-                {...props}
-              />
-            )}
+              <div className="w-full h-10 rounded-lg bg-gray-200 dark:bg-gray-600 animate-pulse" />
+            )
+          ) : (
+            <input
+              ref={ref}
+              type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
+              value={value}
+              onChange={onChange}
+              onWheel={(e) => e.currentTarget.blur()}
+              className={baseInputClasses}
+              {...props}
+            />
+          )}
 
           {type === 'password' && (
             <button
@@ -166,8 +164,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
         {error && <p className="mt-1 text-xs text-red-500">{error}</p>}
       </div>
-    )
+    );
   }
-)
+);
 
-export default Input
+export default Input;

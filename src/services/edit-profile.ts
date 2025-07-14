@@ -1,14 +1,20 @@
 import { AxiosInstance } from './api';
 
-interface Profile {
-    name?: string;
-    mobile?: number;
-    date_of_birth?: string;
-    instaProfileLink?: string;
+interface ProfileFormValues {
+    name: string;
+    email: string;
+    mobile: string;
+    date_of_birth: string;
+    domain: string;
+    salary: string;
+    city: string;
+    area: string;
+    isActive?: boolean;
 }
 
 
-const editProfile = (data: Profile) => {
+
+const editProfile = (data: ProfileFormValues) => {
     const res = AxiosInstance.put('/user/edit-profile', data);
     return res;
 };

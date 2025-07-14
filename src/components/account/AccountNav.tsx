@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Briefcase, Heart, Phone, Settings, UserX } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const navItems = [
   { href: '/account/settings', label: 'Settings', icon: Settings },
@@ -23,6 +23,17 @@ export function AccountNav() {
     router.push('/');
   };
 
+  useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showModal]);
+
   return (
     <>
       <nav className="space-y-1">
@@ -36,8 +47,7 @@ export function AccountNav() {
                 flex items-center px-4 py-2 text-base font-medium rounded-lg
                 ${isActive
                   ? 'bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-100'
-                  : 'text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800'
-                }
+                  : 'text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-800'}
               `}
             >
               <item.icon className="mr-3 h-5 w-5" />

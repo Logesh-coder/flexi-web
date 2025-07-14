@@ -109,7 +109,7 @@ export default function JobPostForm({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow"
+        className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700"
       >
         <div className="space-y-6">
           <Controller
