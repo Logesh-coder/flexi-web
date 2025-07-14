@@ -6,3 +6,14 @@ export interface auth {
     password: string
     confirmPassword: string;
 }
+export interface ProfileFormValues {
+    name: string;
+    email: string;
+    mobile: string;
+    date_of_birth: string;
+    domain: string;
+    salary: string;
+    city: string;
+    area: string;
+    isActive?: boolean;
+}

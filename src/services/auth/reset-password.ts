@@ -1,7 +1,11 @@
-import { auth } from '@/types/auth';
 import { AxiosInstance } from '../api';
 
-const resetPasswordService = (data: auth) => {
+interface ResetFormValues {
+    password: string;
+    confirmPassword: string;
+}
+
+const resetPasswordService = async (data: ResetFormValues) => {
     const res = AxiosInstance.put('/user/reset-password', data);
     return res;
 };
