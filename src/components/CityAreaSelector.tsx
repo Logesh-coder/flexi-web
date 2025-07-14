@@ -25,7 +25,7 @@ export function CityAreaSelector({ city, area, setValue, register, errors }: Pro
                 setLocationData(data);
 
                 if (city) {
-                    const selectedCity = data.find((c) => c.cityName === city);
+                    const selectedCity = data.find((c: any) => c.cityName === city);
                     setAreas(selectedCity?.areas || []);
                 }
             } catch (error) {
@@ -71,7 +71,7 @@ export function CityAreaSelector({ city, area, setValue, register, errors }: Pro
                         ))}
                     </select>
                     <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    {errors.city && <p className="absolute left-0 -bottom-5 text-xs text-red-500">{errors.city.message}</p>}
+                    {errors.city?.message && <p className="absolute left-0 -bottom-5 text-xs text-red-500">{errors.city.message as string}</p>}
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ export function CityAreaSelector({ city, area, setValue, register, errors }: Pro
                         ))}
                     </select>
                     <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    {errors.area && <p className="absolute left-0 -bottom-5 text-xs text-red-500">{errors.area.message}</p>}
+                    {errors.area?.message && <p className="absolute left-0 -bottom-5 text-xs text-red-500">{errors.area.message as string}</p>}
                 </div>
             </div>
         </>

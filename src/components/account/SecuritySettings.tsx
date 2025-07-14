@@ -67,7 +67,7 @@ export function SecuritySettings() {
               label="Current Password"
               type="password"
               {...field}
-              error={errors.current?.message}
+              error={errors.current?.message as string}
             />
           )}
         />
@@ -81,7 +81,7 @@ export function SecuritySettings() {
               label="New Password"
               type="password"
               {...field}
-              error={errors.password?.message}
+              error={errors.password?.message as string}
             />
           )}
         />
@@ -95,7 +95,7 @@ export function SecuritySettings() {
               label="Confirm New Password"
               type="password"
               {...field}
-              error={errors.confirmPassword?.message}
+              error={errors.confirmPassword?.message as string}
             />
           )}
         />
