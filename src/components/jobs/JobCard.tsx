@@ -158,7 +158,7 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         {type === 'worker' && (
-          <p className="capitalize text-sm mb-2 text-primary-400">{job.domain}</p>
+          <p className="capitalize text-sm mb-2 text-primary-700">{job.domain}</p>
         )}
 
         <div className="text-end">

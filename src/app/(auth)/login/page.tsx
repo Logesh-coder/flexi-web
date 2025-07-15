@@ -6,7 +6,7 @@ import loginService from '@/services/auth/login';
 import { loginValidator } from '@/validators/auth.validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
-import { Loader2, Lock, Mail } from 'lucide-react';
+import { Loader, Loader2, Lock, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -133,8 +133,8 @@ function LoginPageComponent() {
         </div>
 
         {loading ? (
-          <div className="w-full px-4 py-2 bg-primary-400 text-white dark:bg-primary-400 inline-flex items-center justify-center rounded-lg font-medium transition-colors">
-            loading...
+          <div className="w-full px-4 py-2 border border-primary-500 inline-flex items-center justify-center rounded-lg font-medium transition-colors">
+            <Loader className="w-5 h-5 animate-spin mr-2 text-primary-500" />
           </div>
         ) : (
           <Button type="submit" className="w-full">

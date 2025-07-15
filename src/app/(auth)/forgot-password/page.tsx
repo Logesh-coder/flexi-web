@@ -6,7 +6,7 @@ import forgotService from '@/services/auth/forgot';
 import { forgotValidator } from '@/validators/auth.validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosError } from 'axios';
-import { Mail } from 'lucide-react';
+import { Loader, Mail } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -67,8 +67,8 @@ export default function forgotPassword() {
                 {error && <span className=' text-sm text-red-400 ' >{error}</span>}
 
                 {loading ? (
-                    <div className="w-full px-4 py-2 bg-primary-400 text-white dark:bg-primary-400 inline-flex items-center justify-center rounded-lg font-medium transition-colors">
-                        loading...
+                    <div className="w-full px-4 py-2 border border-primary-500 inline-flex items-center justify-center rounded-lg font-medium transition-colors">
+                        <Loader className="w-5 h-5 animate-spin mr-2 text-primary-500" />
                     </div>
                 ) : (
                     <Button type="submit" className="w-full">

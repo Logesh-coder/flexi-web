@@ -13,6 +13,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Find The Flexible Jobs and workers',
   description: 'Make money make every day.',
+  icons: {
+    icon: '/logo.png',
+  }
 }
 
 export default function RootLayout({
