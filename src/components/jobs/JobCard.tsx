@@ -3,7 +3,7 @@ import { addWishlist, addWorkerWishlist, removeWishlist, removeWorkerWishlist } 
 import { Job } from '@/types/jobs';
 import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CalendarDays, Clock, MapPin, Share2 } from 'lucide-react';
+import { CalendarDays, Clock, Loader, MapPin, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
@@ -21,6 +21,7 @@ export function JobCard({ job, type }: JobCardProps) {
   const [isSaved, setIsSaved] = useState(job.isSaved || false);
   const path = usePathname();
   const [showCallWarning, setShowCallWarning] = useState(false);
+  const [isCalling, setIsCalling] = useState(false);
 
   const isPostingPage = path === '/jobs/post';
   const userMobileNumber = job?.mobile || job?.createUser?.mobile;
@@ -58,6 +59,7 @@ export function JobCard({ job, type }: JobCardProps) {
 
     if (token) {
       try {
+        setIsCalling(true); // Start loading
         await addCall({
           [type!]: job?._id,
         });
@@ -65,11 +67,14 @@ export function JobCard({ job, type }: JobCardProps) {
         window.location.href = `tel:${userMobileNumber}`;
       } catch (err) {
         console.error('Failed to track call', err);
+      } finally {
+        setIsCalling(false); // Stop loading
       }
     } else {
-      setShowCallWarning(true); // Show modal instead of window.confirm
+      setShowCallWarning(true);
     }
   };
+
 
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
@@ -84,7 +89,6 @@ export function JobCard({ job, type }: JobCardProps) {
               >
                 {type === 'worker' ? job.name : job.title}
               </Link>
-
             </h3>
             <div className="flex">
               <WishlistButton
@@ -158,16 +162,22 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         {type === 'worker' && (
-          <p className="capitalize text-sm mb-2 text-primary-700">{job.domain}</p>
+          <p className="capitalize text-sm mb-2 text-primary-700 dark:text-primary-500 ">{job.domain}</p>
         )}
 
         <div className="text-end">
-          <Button
-            onClick={handleCall}
-            className="text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500"
-          >
-            Call Now
-          </Button>
+          {isCalling ? (
+            <Button className="text-white p-2 px-10 text-sm rounded-full">
+              <Loader className="w-5 h-5 animate-spin mr-2 text-white" />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCall}
+              className="text-white p-2 px-6 text-sm rounded-full hover:bg-primary-400 bg-primary-500"
+            >
+              Call Now
+            </Button>
+          )}
 
         </div>
       </div>
@@ -181,7 +191,7 @@ export function JobCard({ job, type }: JobCardProps) {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl"
+              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl dark:border"
               initial={{ scale: 0.9, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 50 }}

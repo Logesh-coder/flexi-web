@@ -14,7 +14,7 @@ export function JobList() {
   } = useQuery({
     queryKey: ['latest-jobs', { limit: 3 }],
     queryFn: () => getJobService({ limit: 3 }),
-    staleTime: 1000 * 60 * 5, // Optional: cache for 5 mins
+    staleTime: 1000 * 60 * 5,
   });
 
   const jobs = data?.jobs ?? [];

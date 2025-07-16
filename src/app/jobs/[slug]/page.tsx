@@ -68,7 +68,7 @@ export default function JobDetailPage() {
 
     if (!number) return;
 
-    window.location.href = `tel:${number}`;
+    // window.location.href = `tel:${number}`;
 
     if (token) {
       callMutation.mutate();
@@ -218,7 +218,7 @@ export default function JobDetailPage() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl"
+              className="bg-white dark:bg-gray-900 p-6 rounded-xl w-full max-w-sm shadow-xl dark:border"
               initial={{ scale: 0.9, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 50 }}
