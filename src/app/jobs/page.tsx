@@ -59,7 +59,7 @@ export default function JobsPage() {
   const allJobs = data?.pages.flatMap((page) => page.jobs) ?? [];
 
   return (
-    <div className="max-w-7xl mx-auto px-8 py-8">
+    <div className="max-w-7xl mx-auto md:px-8 px-4 py-8">
       <h1 className="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Find Jobs</h1>
 
       {/* Mobile Filter Button */}
