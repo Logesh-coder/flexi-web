@@ -87,6 +87,13 @@ export function Header() {
                     Login
                   </Link>
                 )}
+
+                {/* <Link
+                  href="/login"
+                  className="text-sm ml-2 bg-primary-500 text-white px-4 py-[8px] rounded-lg"
+                >
+                  Post Job
+                </Link> */}
               </>
             )}
           </div>
