@@ -38,9 +38,9 @@ export default function JobDetailPage() {
   const callMutation = useMutation({
     mutationFn: () => addCall({ job: data?._id }),
     onSuccess: () => {
-      // if (userMobileNumber) {
-      //   window.location.href = `tel:${userMobileNumber}`;
-      // }
+      if (userMobileNumber) {
+        window.location.href = `tel:${userMobileNumber}`;
+      }
     },
 
     onError: (err) => {

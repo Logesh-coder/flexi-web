@@ -66,7 +66,7 @@ export function Hero() {
             <div className='flex flex-col items-center justify-center mt-6'>
               <h6 className='mb-4'>(or)</h6>
               {isLoggedIn ? (
-                <Link href='/jobs' className="hover:bg-primary-800 border min-[414px]:w-[380px] w-full text-white px-8 py-3 rounded-full flex items-center justify-between gap-2 transition-colors">
+                <Link href='/jobs/post' className="hover:bg-primary-800 border-2 min-[414px]:w-[380px] w-full text-white px-8 py-3 rounded-full flex items-center justify-between gap-2 transition-colors font-semibold">
                   Post Job
                   <ArrowRight className="w-5 h-5" />
                 </Link>

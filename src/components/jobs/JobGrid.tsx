@@ -12,7 +12,7 @@ interface JobGridProps {
   searchValue: string;
   setSearchValue: any;
   hasMore: boolean;
-  type?: string;
+  type: string;
   loadMore: () => void;
 }
 

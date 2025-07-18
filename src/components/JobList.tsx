@@ -19,6 +19,8 @@ export function JobList() {
 
   const jobs = data?.jobs ?? [];
 
+  console.log('jobs', jobs)
+
   return (
     <section className="pb-16 pt-10 bg-white dark:bg-gray-950 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,7 +42,7 @@ export function JobList() {
           ) : isError ? (
             <div className="text-center py-12 text-red-500">Failed to load jobs.</div>
           ) : jobs.length > 0 ? (
-            jobs.map((job: any) => <JobCard key={job._id} job={job} />)
+            jobs.map((job: any) => <JobCard type='job' key={job._id} job={job} />)
           ) : (
             <div className="text-center py-12">
               <p className="text-gray-600 dark:text-gray-400">No jobs found</p>

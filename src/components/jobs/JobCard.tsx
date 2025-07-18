@@ -14,7 +14,7 @@ import WishlistButton from '../ui/WhishlistButton';
 
 interface JobCardProps {
   job: Job;
-  type?: string;
+  type: string;
 }
 
 export function JobCard({ job, type }: JobCardProps) {
@@ -25,6 +25,8 @@ export function JobCard({ job, type }: JobCardProps) {
 
   const isPostingPage = path === '/jobs/post';
   const userMobileNumber = job?.mobile || job?.createUser?.mobile;
+
+  console.log('job', job)
 
   const toggleWishlist = async () => {
     try {
@@ -56,6 +58,7 @@ export function JobCard({ job, type }: JobCardProps) {
 
   const handleCall = async () => {
     const token = localStorage.getItem('TOKEN');
+    console.log('come with tel1')
 
     if (token) {
       try {
@@ -65,6 +68,7 @@ export function JobCard({ job, type }: JobCardProps) {
         });
 
         window.location.href = `tel:${userMobileNumber}`;
+        console.log('come with tel')
       } catch (err) {
         console.error('Failed to track call', err);
       } finally {
@@ -167,7 +171,7 @@ export function JobCard({ job, type }: JobCardProps) {
 
         <div className="text-end">
           {isCalling ? (
-            <Button className="text-white p-2 px-10 text-sm rounded-full">
+            <Button className="text-white p-2 px-[40px] text-sm rounded-full hover:bg-primary-400 bg-primary-500">
               <Loader className="w-5 h-5 animate-spin mr-2 text-white" />
             </Button>
           ) : (
