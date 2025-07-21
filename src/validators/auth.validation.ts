@@ -111,6 +111,7 @@ export const updatePasswordValidator = yup.object({
         .required("Confirm password is required"),
 });
 
+const time12HourRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] ?([AaPp][Mm])$/;
 
 export const jobPostSchema = yup.object().shape({
     title: yup
@@ -162,18 +163,15 @@ export const jobPostSchema = yup.object().shape({
                 return selectedDate >= today;
             }
         ),
-
-
     durationStartTime: yup
         .string()
         .required('Start time is required')
-        .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Start time must be a valid time in HH:mm format'),
+        .matches(time12HourRegex, 'Start time must be a valid time in hh:mm AM/PM format'),
 
     durationEndTime: yup
         .string()
         .required('End time is required')
-        .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'End time must be a valid time in HH:mm format'),
-
+        .matches(time12HourRegex, 'End time must be a valid time in hh:mm AM/PM format'),
 
     area: yup
         .string()

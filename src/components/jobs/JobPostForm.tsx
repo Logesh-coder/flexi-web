@@ -72,6 +72,10 @@ export default function JobPostForm({
     defaultValues: initialValues,
   })
 
+  const check = watch && watch('durationStartTime')
+
+  console.log('check', check)
+
   useEffect(() => {
     if (initialValues) {
       reset(initialValues)
@@ -288,9 +292,20 @@ export default function JobPostForm({
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (isEdit ? 'Updating...' : 'Posting...') : isEdit ? 'Update Job' : 'Post Job'}
-          </Button>
+          {loading ? (
+            <Button
+              type="button"
+              disabled
+              className="w-full cursor-not-allowed opacity-60"
+            >
+              {isEdit ? 'Updating...' : 'Posting...'}
+            </Button>
+          ) : (
+            <Button type="submit" className="w-full">
+              {isEdit ? 'Update Job' : 'Post Job'}
+            </Button>
+          )}
+
         </div>
       </form>
 

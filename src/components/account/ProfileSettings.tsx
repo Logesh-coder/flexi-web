@@ -33,7 +33,6 @@ const today = new Date();
 const minAgeDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
 
 export function ProfileSettings() {
-  const [originalProfile, setOriginalProfile] = useState<Partial<ProfileFormValues>>({});
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState('');
 
@@ -66,7 +65,6 @@ export function ProfileSettings() {
     try {
       const response = await myProfile();
       const data = response?.data?.data;
-      setOriginalProfile(data);
       reset(data);
     } catch (err) {
       console.error('Failed to load profile', err);
@@ -111,7 +109,7 @@ export function ProfileSettings() {
   if (!profileValues.domain) missingFields.push('work domains');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gary-500 p-6">
       {profileValues.isActive === false && (
         <div className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400">
           <svg className="shrink-0 w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

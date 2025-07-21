@@ -26,8 +26,6 @@ export function JobCard({ job, type }: JobCardProps) {
   const isPostingPage = path === '/jobs/post';
   const userMobileNumber = job?.mobile || job?.createUser?.mobile;
 
-  console.log('job', job)
-
   const toggleWishlist = async () => {
     try {
       if (isSaved) {
@@ -58,26 +56,30 @@ export function JobCard({ job, type }: JobCardProps) {
 
   const handleCall = async () => {
     const token = localStorage.getItem('TOKEN');
-    console.log('come with tel1')
 
-    if (token) {
-      try {
-        setIsCalling(true); // Start loading
-        await addCall({
-          [type!]: job?._id,
-        });
-
-        window.location.href = `tel:${userMobileNumber}`;
-        console.log('come with tel')
-      } catch (err) {
-        console.error('Failed to track call', err);
-      } finally {
-        setIsCalling(false); // Stop loading
-      }
-    } else {
+    if (!token) {
       setShowCallWarning(true);
+      return;
+    }
+
+    try {
+      setIsCalling(true);
+
+      await addCall({
+        [type!]: job?._id,
+      });
+
+      // Slight delay before opening phone dialer
+      setTimeout(() => {
+        window.location.href = `tel:${userMobileNumber}`;
+      }, 300);
+    } catch (err) {
+      console.error('Failed to track call', err);
+    } finally {
+      setIsCalling(false); // Stop loader
     }
   };
+
 
 
   return (

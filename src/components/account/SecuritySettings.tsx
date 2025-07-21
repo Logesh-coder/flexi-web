@@ -54,7 +54,7 @@ export function SecuritySettings() {
   }, [alertMessage]);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gary-500 p-6">
       <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">Security</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

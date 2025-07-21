@@ -25,3 +25,17 @@ input[type='number']::-webkit-inner-spin-button {
 input[type='number'] {
     -moz-appearance: textfield;
 }
+
+.react-time-picker__inputGroup__amPm {
+    background-color: #1f2937;
+    /* dark gray */
+    color: #fff;
+    /* white text */
+    border: 1px solid #4b5563;
+    /* darker border */
+}
+
+.react-time-picker__inputGroup__amPm option {
+    background-color: #1f2937;
+    color: #fff;
+}

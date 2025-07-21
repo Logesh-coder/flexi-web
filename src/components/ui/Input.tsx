@@ -1,5 +1,6 @@
 'use client';
 
+import dayjs from 'dayjs';
 import { Eye, EyeOff, LucideIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -117,24 +118,31 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             hasMounted ? (
               <div
                 className={`relative w-full rounded-lg px-4 py-2 ${error
-                    ? 'border border-red-500'
-                    : 'border border-gray-300 dark:border-gray-600'
+                  ? 'border border-red-500'
+                  : 'border border-gray-300 dark:border-gray-600'
                   } bg-white dark:bg-gray-700`}
               >
                 <TimePicker
                   onChange={(time) => {
+                    if (!time) return;
+
+                    const formattedTime = dayjs(`2023-01-01 ${time}`).format('hh:mm A');
+
                     if (setValue && name) {
-                      setValue(name, time, { shouldValidate: true });
+                      setValue(name, formattedTime, { shouldValidate: true });
                     } else {
-                      onChange?.(time);
+                      onChange?.(formattedTime);
                     }
                   }}
-                  value={value || ''}
+                  value={value || '12:00 AM'}
                   disableClock={false}
                   clearIcon={null}
-                  format="HH:mm"
+                  format="hh:mm a"
                   className="!w-full dark:!bg-gray-700 !border-none dark:!text-white"
+                  hourPlaceholder="hh"
+                  minutePlaceholder="mm"
                 />
+
               </div>
             ) : (
               <div className="w-full h-10 rounded-lg bg-gray-200 dark:bg-gray-600 animate-pulse" />
