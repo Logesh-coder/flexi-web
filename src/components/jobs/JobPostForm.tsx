@@ -72,10 +72,6 @@ export default function JobPostForm({
     defaultValues: initialValues,
   })
 
-  const check = watch && watch('durationStartTime')
-
-  console.log('check', check)
-
   useEffect(() => {
     if (initialValues) {
       reset(initialValues)

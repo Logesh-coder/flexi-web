@@ -24,8 +24,10 @@ export default function PostedJobsPage() {
 
         const response = await getJobService({ id: 'true', page, limit: limit });
 
-        const fetchedJobs = response.data?.data?.jobs || [];
-        const totalPages = response.data?.data?.pages || 1;
+        console.log('response', response)
+
+        const fetchedJobs = response?.jobs || [];
+        const totalPages = response.pages || 1;
 
         setJobs(prev => (page === 1 ? fetchedJobs : [...prev, ...fetchedJobs]));
         setHasMore(page < totalPages);
