@@ -78,7 +78,7 @@ export function JobGrid({
             {jobsArray.length > 0 ? (
               <>
                 {jobsArray.map((job: any) => (
-                  <JobCard key={job._id} job={job} type={type} />
+                  <JobCard key={job?._id} job={job} type={type} />
                 ))}
 
                 {/* Sentinel div for triggering loadMore */}

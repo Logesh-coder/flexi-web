@@ -6,7 +6,7 @@ import WishlistButton from '@/components/ui/WhishlistButton';
 import { addCall } from '@/services/add-call';
 import getSingleJobService from '@/services/get-single-job-service';
 import { addWishlist, removeWishlist } from '@/services/wishlist/whishlist';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarDays, Clock, Loader2, MapPin, User } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 
 export default function JobDetailPage() {
   const { slug } = useParams();
-  const queryClient = useQueryClient();
   const jobUrl = usePathname();
 
   const [isSaved, setIsSaved] = useState(false);
@@ -22,7 +21,7 @@ export default function JobDetailPage() {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ['job', slug],
-    queryFn: () => getSingleJobService(slug as string).then((res) => res.data.data),
+    queryFn: () => getSingleJobService(slug as string).then((res) => res?.data?.data),
     enabled: !!slug,
   });
 
@@ -31,7 +30,7 @@ export default function JobDetailPage() {
 
   useEffect(() => {
     if (typeof data?.isSaved === 'boolean') {
-      setIsSaved(data.isSaved);
+      setIsSaved(data?.isSaved);
     }
   }, [data?.isSaved]);
 
@@ -94,7 +93,7 @@ export default function JobDetailPage() {
                 {isLoading ? (
                   <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
                 ) : (
-                  <span className='capitalize'>{data.title}</span>
+                  <span className='capitalize'>{data?.title}</span>
                 )}
               </h1>
 
@@ -110,7 +109,7 @@ export default function JobDetailPage() {
                 {isLoading ? (
                   <div className="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                 ) : (
-                  data.date
+                  data?.date
                 )}
               </div>
 
@@ -119,7 +118,7 @@ export default function JobDetailPage() {
                 {isLoading ? (
                   <div className="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
                 ) : (
-                  `${data.durationStartTime} to ${data.durationEndTime}`
+                  `${data?.durationStartTime} to ${data?.durationEndTime}`
                 )}
               </div>
             </div>
@@ -128,7 +127,7 @@ export default function JobDetailPage() {
               {isLoading ? (
                 <div className="h-6 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
-                `₹ ${data.budget}`
+                `₹ ${data?.budget}`
               )}
             </h1>
 
@@ -137,7 +136,7 @@ export default function JobDetailPage() {
               {isLoading ? (
                 <div className="h-4 w-40 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
-                `${data.area}, ${data.city}`
+                `${data?.area}, ${data?.city}`
               )}
             </div>
 
@@ -145,7 +144,7 @@ export default function JobDetailPage() {
               {isLoading ? (
                 <div className="h-4 w-36 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
               ) : (
-                data.landMark
+                data?.landMark
               )}
             </h4>
 
@@ -156,10 +155,10 @@ export default function JobDetailPage() {
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 w-5/6 rounded animate-pulse"></div>
               </div>
             ) : (
-              data.description && (
+              data?.description && (
                 <div className="prose mt-4 dark:prose-invert max-w-none">
                   <h2 className="text-xl font-semibold mb-1">Description</h2>
-                  <p className="whitespace-pre-line">{data.description}</p>
+                  <p className="whitespace-pre-line">{data?.description}</p>
                 </div>
               )
             )}

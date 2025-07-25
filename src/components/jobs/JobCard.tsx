@@ -18,7 +18,7 @@ interface JobCardProps {
 }
 
 export function JobCard({ job, type }: JobCardProps) {
-  const [isSaved, setIsSaved] = useState(job.isSaved || false);
+  const [isSaved, setIsSaved] = useState(job?.isSaved || false);
   const path = usePathname();
   const [showCallWarning, setShowCallWarning] = useState(false);
   const [isCalling, setIsCalling] = useState(false);
@@ -90,10 +90,10 @@ export function JobCard({ job, type }: JobCardProps) {
           <div className="flex items-center justify-between">
             <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               <Link
-                href={`${type === 'worker' ? `/workers/${job.slug}` : `/jobs/${job.slug}`}`}
+                href={`${type === 'worker' ? `/workers/${job?.slug}` : `/jobs/${job?.slug}`}`}
                 onClick={(e) => isPostingPage && e.preventDefault()}
               >
-                {type === 'worker' ? job.name : job.title}
+                {type === 'worker' ? job?.name : job?.title}
               </Link>
             </h3>
             <div className="flex">
@@ -105,7 +105,7 @@ export function JobCard({ job, type }: JobCardProps) {
 
               {isPostingPage ? <Share2
                 className="w-6 h-6 cursor-pointer ml-4 text-gray-400 hover:text-primary-400"
-              /> : <ShareButtons url={`/jobs/${job.slug}`} />}
+              /> : <ShareButtons url={`/jobs/${job?.slug}`} />}
 
             </div>
           </div>
@@ -115,11 +115,11 @@ export function JobCard({ job, type }: JobCardProps) {
             <div className="flex flex-wrap gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
               <span className="flex items-center gap-1.5">
                 <CalendarDays className="w-4 h-4 opacity-70" />
-                {job.date}
+                {job?.date}
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
-                {job.durationStartTime} to {job.durationEndTime}
+                {job?.durationStartTime} to {job?.durationEndTime}
               </span>
             </div>
           )}
@@ -129,12 +129,12 @@ export function JobCard({ job, type }: JobCardProps) {
               <div className="flex items-start gap-1.5 text-sm">
                 <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
                 <div>
-                  <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job.area}</span>
-                  {job.city && (
-                    <span className="text-gray-500 capitalize dark:text-gray-400">, {job.city}</span>
+                  <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job?.area}</span>
+                  {job?.city && (
+                    <span className="text-gray-500 capitalize dark:text-gray-400">, {job?.city}</span>
                   )}
-                  {job.landMark && (
-                    <p className="text-gray-500 dark:text-gray-400 mt-1">{job.landMark}</p>
+                  {job?.landMark && (
+                    <p className="text-gray-500 dark:text-gray-400 mt-1">{job?.landMark}</p>
                   )}
                 </div>
               </div>
@@ -144,8 +144,8 @@ export function JobCard({ job, type }: JobCardProps) {
 
         {/* Budget */}
         <h3 className="text-xl capitalize font-semibold mb-2 text-gray-900 dark:text-white">
-          <Link href={`/jobs/${job._id}`}>
-            ₹ {type === 'worker' ? job.salary : job.budget}
+          <Link href={`/jobs/${job?._id}`}>
+            ₹ {type === 'worker' ? job?.salary : job?.budget}
           </Link>
         </h3>
 
@@ -155,12 +155,12 @@ export function JobCard({ job, type }: JobCardProps) {
             <div className="flex items-start gap-1.5 text-sm">
               <MapPin className="w-4 h-4 mt-0.5 opacity-70 flex-shrink-0" />
               <div>
-                <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job.area}</span>
-                {job.city && (
-                  <span className="text-gray-500 capitalize dark:text-gray-400">, {job.city}</span>
+                <span className="font-medium text-gray-700 capitalize dark:text-gray-300">{job?.area}</span>
+                {job?.city && (
+                  <span className="text-gray-500 capitalize dark:text-gray-400">, {job?.city}</span>
                 )}
-                {job.landMark && (
-                  <p className="text-gray-500 dark:text-gray-400 mt-1">{job.landMark}</p>
+                {job?.landMark && (
+                  <p className="text-gray-500 dark:text-gray-400 mt-1">{job?.landMark}</p>
                 )}
               </div>
             </div>
@@ -168,7 +168,7 @@ export function JobCard({ job, type }: JobCardProps) {
         )}
 
         {type === 'worker' && (
-          <p className="capitalize text-sm mb-2 text-primary-700 dark:text-primary-500 ">{job.domain}</p>
+          <p className="capitalize text-sm mb-2 text-primary-700 dark:text-primary-500 ">{job?.domain}</p>
         )}
 
         <div className="text-end">
