@@ -3,12 +3,13 @@
 import { Button } from '@/components/ui/Button';
 import { addCall } from '@/services/add-call';
 import getSingleWorkerService from '@/services/get-single-worker';
+import { addWorkerWishlist, removeWorkerWishlist } from '@/services/wishlist/whishlist';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, Loader2, Mail, MapPin, User } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function WorkerDetailPage() {
   const { slug } = useParams();
@@ -22,6 +23,12 @@ export default function WorkerDetailPage() {
     enabled: !!slug,
   });
 
+  useEffect(() => {
+    if (data?.isSaved) {
+      setIsWishlisted(true);
+    }
+  }, [data]);
+
   // Call mutation
   const callMutation = useMutation({
     mutationFn: () => addCall({ worker: data?._id }),
@@ -32,6 +39,8 @@ export default function WorkerDetailPage() {
       console.error('Failed to track call');
     },
   });
+
+  console.log('data', data)
 
   // const handleCall = () => {
   //   const token = localStorage.getItem('TOKEN');
@@ -60,8 +69,18 @@ export default function WorkerDetailPage() {
   };
 
 
-  const toggleWishlist = () => {
-    setIsWishlisted(prev => !prev);
+
+  const toggleWishlist = async () => {
+    try {
+      if (isWishlisted) {
+        await removeWorkerWishlist(data);
+      } else {
+        await addWorkerWishlist(data);
+      }
+      setIsWishlisted(prev => !prev);
+    } catch (error) {
+      console.error("Wishlist action failed:", error);
+    }
   };
 
   const getAge = (dob: string) => {
