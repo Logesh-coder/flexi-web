@@ -76,7 +76,6 @@ export default function JobDetailPage() {
     }
   };
 
-
   if (isError) {
     return <p className="text-red-500">{(error as any)?.message || 'Something went wrong'}</p>;
   }

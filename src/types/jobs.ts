@@ -26,6 +26,8 @@ export interface Job {
   createUser?: JobUser
   contact?: string
   mobile?: string
+  jobId?: string
+  workerId?: string
 }
 
 export interface JobFilters {

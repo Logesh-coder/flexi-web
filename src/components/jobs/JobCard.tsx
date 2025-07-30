@@ -80,8 +80,6 @@ export function JobCard({ job, type }: JobCardProps) {
     }
   };
 
-
-
   return (
     <div className="relative bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-gray-700 group">
       <div className="flex flex-col h-full">

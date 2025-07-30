@@ -40,8 +40,6 @@ export default function WorkerDetailPage() {
     },
   });
 
-  console.log('data', data)
-
   // const handleCall = () => {
   //   const token = localStorage.getItem('TOKEN');
   //   if (token) {

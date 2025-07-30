@@ -69,14 +69,33 @@ export default function JobPostForm({
     resolver: yupResolver(jobPostSchema),
     mode: 'onChange',
     reValidateMode: 'onChange',
-    defaultValues: initialValues,
+    // defaultValues: initialValues,
   })
 
+  console.log('initialValues', initialValues)
+
   useEffect(() => {
-    if (initialValues) {
-      reset(initialValues)
-    }
-  }, [initialValues, reset])
+    if (!initialValues) return;
+
+    const parsedDate = new Date(initialValues.date);
+    const isValidDate = !isNaN(parsedDate.getTime());
+
+    const formattedDate = isValidDate
+      ? parsedDate.toISOString().split('T')[0]
+      : '';
+
+    reset({
+      ...initialValues,
+      date: formattedDate,
+    });
+  }, [initialValues?.date]);
+
+
+  // useEffect(() => {
+  //   if (initialValues) {
+  //     reset(initialValues)
+  //   }
+  // }, [initialValues, reset])
 
   const watchedData = watch()
   // const  clg = watchedData && watchedData()
