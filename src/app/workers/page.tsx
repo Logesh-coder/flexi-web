@@ -43,7 +43,10 @@ export default function WorkersPage() {
         }
     };
 
-    const isFilterApplied = Object.values(filters).some((v) => v !== '');
+    // const isFilterApplied = Object.values(filters).some((v) => v !== '');
+    const isFilterApplied = Object.entries(filters)
+        .filter(([key]) => key !== 'search')
+        .some(([, value]) => value !== '');
 
     useEffect(() => {
         if (mobileFilterOpen) {
