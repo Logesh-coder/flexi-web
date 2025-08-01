@@ -3,12 +3,24 @@ import { ChevronDown, LandPlot, MapPin } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { FieldErrors, UseFormRegister, UseFormSetValue } from 'react-hook-form';
 
+interface ProfileFormValues {
+    name: string;
+    email: string;
+    mobile: string;
+    date_of_birth: string;
+    domain: string;
+    salary: string;
+    city: string;
+    area: string;
+    isActive?: boolean;
+}
+
 interface Props {
     city: string;
     area: string;
-    setValue: UseFormSetValue<any>;
-    register: UseFormRegister<any>;
-    errors: FieldErrors<any>;
+    setValue: UseFormSetValue<ProfileFormValues>; // ✅ not `any`
+    register: UseFormRegister<ProfileFormValues>; // ✅ not `any`
+    errors: FieldErrors<ProfileFormValues>;
 }
 
 export function CityAreaSelector({ city, area, setValue, register, errors }: Props) {
