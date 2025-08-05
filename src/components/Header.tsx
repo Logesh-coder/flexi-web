@@ -33,7 +33,7 @@ export function Header() {
               className="text-[25px] font-bold text-primary-600"
             >
               {/* <Image src={logo} alt='logo' width={70} height={70} /> */}
-              Flexi
+              Flexy
             </Link>
           </div>
 

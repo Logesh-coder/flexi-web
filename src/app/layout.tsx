@@ -11,10 +11,10 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Find The Flexible Jobs and workers',
+  title: 'Find The Flexyble Jobs and workers',
   description: 'Make money make every day.',
   icons: {
-    icon: '/logo.png',
+    icon: '/flexy.png',
   }
 }
 
